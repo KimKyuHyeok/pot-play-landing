@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
+import Footer from "./components/footer/Footer";
 
 export default function Home() {
   const imageNumbers = Array.from({ length: 13 }, (_, i) => i + 1);
@@ -85,11 +86,8 @@ export default function Home() {
       // 스크롤이 멈춘 후 플래그 해제
       scrollTimeout = setTimeout(() => {
         isScrollingRef.current = false;
-        // 스크롤이 끝난 후에도 마우스가 메뉴 영역에 있으면 호버 상태 유지
-        if (isHovered) {
-          // 마우스가 여전히 메뉴 영역에 있는지 확인하기 위해
-          // 약간의 지연 후에도 호버 상태를 유지
-        }
+        // 스크롤이 끝나면 메뉴 클릭 플래그도 해제하여 호버가 정상적으로 작동하도록
+        menuClickRef.current = false;
       }, 300);
     };
 
@@ -144,9 +142,25 @@ export default function Home() {
             setIsHovered(true);
           }}
           onMouseLeave={() => {
+            // 기존 타임아웃 클리어
+            if (hoverTimeoutRef.current) {
+              clearTimeout(hoverTimeoutRef.current);
+              hoverTimeoutRef.current = null;
+            }
+
+            // menuClickRef가 true면 (클릭 후), 스크롤 중이어도 즉시 호버 끄기
+            if (menuClickRef.current) {
+              menuClickRef.current = false;
+              setIsHovered(false);
+              return;
+            }
+
+            // 스크롤 중이면 호버 유지 (클릭하지 않은 경우)
             if (isScrollingRef.current) return;
+
             hoverTimeoutRef.current = setTimeout(() => {
               setIsHovered(false);
+              hoverTimeoutRef.current = null;
             }, 200);
           }}
         >
@@ -186,9 +200,25 @@ export default function Home() {
               setIsHovered(true);
             }}
             onMouseLeave={() => {
-              if (isScrollingRef.current || menuClickRef.current) return;
+              // 기존 타임아웃 클리어
+              if (hoverTimeoutRef.current) {
+                clearTimeout(hoverTimeoutRef.current);
+                hoverTimeoutRef.current = null;
+              }
+
+              // menuClickRef가 true면 (클릭 후), 스크롤 중이어도 즉시 호버 끄기
+              if (menuClickRef.current) {
+                menuClickRef.current = false;
+                setIsHovered(false);
+                return;
+              }
+
+              // 스크롤 중이면 호버 유지 (클릭하지 않은 경우)
+              if (isScrollingRef.current) return;
+
               hoverTimeoutRef.current = setTimeout(() => {
                 setIsHovered(false);
+                hoverTimeoutRef.current = null;
               }, 300);
             }}
           >
@@ -228,10 +258,8 @@ export default function Home() {
                       // 이미지 번호를 인덱스로 변환 (num: 2 → index: 1, num: 4 → index: 3)
                       const targetIndex = targetImageNum - 1;
                       scrollToImage(targetIndex);
-                      // 클릭 후 일정 시간 동안 메뉴 유지
-                      setTimeout(() => {
-                        menuClickRef.current = false;
-                      }, 2000);
+                      // 스크롤이 끝나면 handleScroll에서 menuClickRef.current를 false로 설정하므로
+                      // 여기서는 별도 타임아웃이 필요 없음
                     }}
                     onMouseDown={(e) => {
                       e.preventDefault();
@@ -259,8 +287,14 @@ export default function Home() {
                 ref={(el) => {
                   imageRefs.current[index] = el;
                 }}
-                className="relative w-full h-screen snap-start snap-always flex-shrink-0"
-                style={{ scrollSnapAlign: "start", scrollSnapStop: "always" }}
+                className={`relative w-full h-screen snap-start flex-shrink-0 ${
+                  index === imageNumbers.length - 1 ? "" : "snap-always"
+                }`}
+                style={{
+                  scrollSnapAlign: "start",
+                  scrollSnapStop:
+                    index === imageNumbers.length - 1 ? "normal" : "always",
+                }}
               >
                 {/* 각 페이지의 로고와 선 - absolute로 배치 */}
                 <div className="absolute top-4 left-10 z-50">
@@ -359,6 +393,13 @@ export default function Home() {
               </div>
             );
           })}
+        </div>
+        {/* Footer를 같은 컨테이너 안에 배치 */}
+        <div
+          className="snap-start flex-shrink-0"
+          style={{ scrollSnapStop: "normal" }}
+        >
+          <Footer />
         </div>
       </div>
     </div>
