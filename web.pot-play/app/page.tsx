@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Footer from "./components/footer/Footer";
+import InquiryModal from "./components/modal/InquiryModal";
 
 export default function Home() {
   const imageNumbers = Array.from({ length: 13 }, (_, i) => i + 1);
@@ -15,6 +16,7 @@ export default function Home() {
   const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const isScrollingRef = useRef(false);
   const menuClickRef = useRef(false);
+  const [isInquiryModalOpen, setIsInquiryModalOpen] = useState(false);
   const navList = [
     { id: 1, name: "문제정의" },
     { id: 2, name: "맞춤형 광고 솔루션" },
@@ -49,6 +51,7 @@ export default function Home() {
 
   useEffect(() => {
     let scrollTimeout: NodeJS.Timeout;
+    let lastIndex = currentIndex;
 
     const handleScroll = () => {
       const container = scrollContainerRef.current;
@@ -77,7 +80,10 @@ export default function Home() {
         }
       });
 
-      setCurrentIndex(closestIndex);
+      if (lastIndex !== closestIndex) {
+        setCurrentIndex(closestIndex);
+        lastIndex = closestIndex;
+      }
 
       // 스크롤 중 플래그 설정
       isScrollingRef.current = true;
@@ -294,6 +300,7 @@ export default function Home() {
                   scrollSnapAlign: "start",
                   scrollSnapStop:
                     index === imageNumbers.length - 1 ? "normal" : "always",
+                  willChange: "transform", // GPU 가속
                 }}
               >
                 {/* 각 페이지의 로고와 선 - absolute로 배치 */}
@@ -323,7 +330,8 @@ export default function Home() {
                       fill
                       className="object-cover"
                       sizes="1920px"
-                      loading={index === 0 ? "eager" : "lazy"}
+                      priority={index < 3} // 처음 3개 이미지는 우선 로딩
+                      {...(index >= 3 && { loading: "lazy" })}
                       onError={(
                         e: React.SyntheticEvent<HTMLImageElement, Event>
                       ) => {
@@ -394,7 +402,24 @@ export default function Home() {
             );
           })}
         </div>
-        {/* Footer를 같은 컨테이너 안에 배치 */}
+        <Image
+          src={isInquiryModalOpen ? "/Xcircle.svg" : "/send.svg"}
+          alt={isInquiryModalOpen ? "close" : "send"}
+          width={48}
+          height={48}
+          className="fixed bottom-30 right-20 z-50 cursor-pointer"
+          onClick={() => {
+            if (isInquiryModalOpen) {
+              setIsInquiryModalOpen(false);
+            } else {
+              setIsInquiryModalOpen(true);
+            }
+          }}
+        />
+        <InquiryModal
+          isOpen={isInquiryModalOpen}
+          onClose={() => setIsInquiryModalOpen(false)}
+        />
         <div
           className="snap-start flex-shrink-0"
           style={{ scrollSnapStop: "normal" }}

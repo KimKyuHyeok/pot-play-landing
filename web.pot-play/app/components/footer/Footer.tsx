@@ -4,18 +4,18 @@ import Image from "next/image";
 export default function Footer() {
   return (
     <div className="w-full flex flex-col  py-[30px] px-[40px]">
-      <div className="flex gap-[20px] items-center justify-center">
+      <div className="flex gap-[30px] items-center justify-center">
         <Image
           src="../../../googleButton.svg"
           alt="googleButton"
-          width={100}
-          height={100}
+          width={120}
+          height={40}
         />
         <Image
           src="../../../appstoreButton.svg"
           alt="appstoreButton"
-          width={100}
-          height={100}
+          width={120}
+          height={40}
         />
       </div>
       <div className="pt-[40px]">
