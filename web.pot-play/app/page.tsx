@@ -157,23 +157,29 @@ export default function Home() {
     []
   );
 
-  // 휠 이벤트 제어: 한 페이지만 이동하도록 제한
+  // 휠 이벤트 제어: 한 페이지만 이동하도록 제한 (마지막 페이지 이후는 자유 스크롤)
   useEffect(() => {
     const container = scrollContainerRef.current;
     if (!container) return;
 
     const handleWheel = (e: WheelEvent) => {
+      const currentIdx = lastIndexRef.current;
+
+      // 마지막 이미지(12번 인덱스)에 있고 아래로 스크롤하는 경우: 자유 스크롤 허용
+      if (currentIdx === imageNumbers.length - 1 && e.deltaY > 0) {
+        return; // 기본 스크롤 동작 허용
+      }
+
       // 스크롤 중이면 무시
       if (isWheelScrollingRef.current) {
         e.preventDefault();
         return;
       }
 
-      // 기본 스크롤 동작 막기
+      // 이미지 페이지 사이에서만 기본 스크롤 동작 막기
       e.preventDefault();
 
       const deltaY = e.deltaY;
-      const currentIdx = lastIndexRef.current;
 
       // 아래로 스크롤 (양수)
       if (deltaY > 0 && currentIdx < imageNumbers.length - 1) {
@@ -181,7 +187,7 @@ export default function Home() {
         scrollToImage(currentIdx + 1);
         setTimeout(() => {
           isWheelScrollingRef.current = false;
-        }, 600); // smooth scroll 시간
+        }, 600);
       }
       // 위로 스크롤 (음수)
       else if (deltaY < 0 && currentIdx > 0) {
@@ -359,8 +365,18 @@ export default function Home() {
           />
         </div>
 
-        {/* 문의 모달 버튼 */}
+        {currentIndex === 0 && (
+          <Image
+            src="/arrow-down.svg"
+            alt="arrow down"
+            width={30}
+            height={30}
+            priority
+            className="fixed left-1/2 -translate-x-1/2 bottom-[30px] z-50"
+          />
+        )}
 
+        {/* 문의 모달 버튼 */}
         <Image
           src={isInquiryModalOpen ? "/Xcircle.svg" : "/send.svg"}
           alt={isInquiryModalOpen ? "close" : "send"}
@@ -379,7 +395,7 @@ export default function Home() {
         <InquiryModal
           isOpen={isInquiryModalOpen}
           onClose={() => setIsInquiryModalOpen(false)}
-          className="fixed bottom-[16%] right-[10%] z-50"
+          className="fixed bottom-[16%] right-[12%] z-50"
         />
 
         {/* 푸터 */}

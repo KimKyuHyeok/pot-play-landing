@@ -11,6 +11,11 @@ interface InputProps {
   error?: string; // 에러 메시지
   radioOptions?: { label: string; value: string }[]; // radio 전용 옵션
   radioDirection?: "horizontal" | "vertical"; // 라디오 배치 방향
+  showInputBelowRadio?: boolean; // 라디오 아래 인풋 표시 여부
+  inputValue?: string; // 라디오 아래 인풋 값
+  onInputChange?: (value: string) => void; // 라디오 아래 인풋 변경 핸들러
+  inputPlaceholder?: string; // 라디오 아래 인풋 placeholder
+  inputError?: string; // 라디오 아래 인풋 에러 메시지
 }
 
 export default function Input({
@@ -24,6 +29,11 @@ export default function Input({
   error,
   radioOptions = [],
   radioDirection = "horizontal",
+  showInputBelowRadio = false,
+  inputValue,
+  onInputChange,
+  inputPlaceholder,
+  inputError,
 }: InputProps) {
   const baseInputStyle =
     "placeholder:text-[14px] w-full border border-[#D9D9D9] rounded-[8px] px-[6px] py-[6px] focus:outline-none focus:ring-2 focus:ring-blue-500";
@@ -32,30 +42,48 @@ export default function Input({
     <div className="flex flex-col gap-2 w-full">
       <label className="text-[14px] font-regular text-[#1E1E1E]">{title}</label>
       {type === "radio" ? (
-        <div
-          className={`flex ${
-            radioDirection === "vertical"
-              ? "flex-col gap-2"
-              : "flex-row gap-[20px]"
-          }`}
-        >
-          {radioOptions?.map((option) => (
-            <div key={option.value} className="form-control">
-              <label className="label cursor-pointer flex flex-row items-center gap-[6px] py-0">
-                <input
-                  type="radio"
-                  name={title}
-                  value={option.value}
-                  checked={value === option.value}
-                  onChange={(e) => onChange?.(e.target.value)}
-                  className="radio"
-                />
-                <span className="label-text text-[14px] text-[#1E1E1E] leading-none">
-                  {option.label}
+        <div className="flex flex-col gap-2">
+          <div
+            className={`flex ${
+              radioDirection === "vertical"
+                ? "flex-col gap-2"
+                : "flex-row gap-[20px]"
+            }`}
+          >
+            {radioOptions?.map((option) => (
+              <div key={option.value} className="form-control">
+                <label className="label cursor-pointer flex flex-row items-center gap-[6px] py-0">
+                  <input
+                    type="radio"
+                    name={title}
+                    value={option.value}
+                    checked={value === option.value}
+                    onChange={(e) => onChange?.(e.target.value)}
+                    className="radio"
+                  />
+                  <span className="label-text text-[14px] text-[#1E1E1E] leading-none">
+                    {option.label}
+                  </span>
+                </label>
+              </div>
+            ))}
+          </div>
+          {showInputBelowRadio && (
+            <div className="flex flex-col gap-2">
+              <input
+                type="text"
+                value={inputValue || ""}
+                onChange={(e) => onInputChange?.(e.target.value)}
+                placeholder={inputPlaceholder}
+                className={baseInputStyle}
+              />
+              {inputError && (
+                <span className="text-[12px] text-red-500 mt-[-4px]">
+                  {inputError}
                 </span>
-              </label>
+              )}
             </div>
-          ))}
+          )}
         </div>
       ) : type === "select" ? (
         <div className="relative">

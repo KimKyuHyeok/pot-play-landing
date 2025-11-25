@@ -222,26 +222,24 @@ export default function InquiryModal({
       "managerName",
       formData.managerName
     );
-    const isPhoneValid = validateKoreanPhone(formData.contact);
 
-    // 검증 실패 시 제출하지 않음
-    if (!isCompanyNameValid || !isManagerNameValid || !isPhoneValid) {
-      return;
-    }
-    // 연락처 검증
+    // 연락처 검증 (전화번호 또는 이메일)
     const isContactValid =
       formData.contactType === "phone"
         ? validateKoreanPhone(formData.contact)
         : validateEmail(formData.contact);
 
-    if (!isContactValid) {
-      setErrors((prev) => ({
-        ...prev,
-        contact:
-          formData.contactType === "phone"
-            ? "전화번호 형식이 올바르지 않습니다."
-            : "이메일 형식이 올바르지 않습니다.",
-      }));
+    // 검증 실패 시 제출하지 않음
+    if (!isCompanyNameValid || !isManagerNameValid || !isContactValid) {
+      if (!isContactValid) {
+        setErrors((prev) => ({
+          ...prev,
+          contact:
+            formData.contactType === "phone"
+              ? "전화번호 형식이 올바르지 않습니다."
+              : "이메일 형식이 올바르지 않습니다.",
+        }));
+      }
       return;
     }
 
@@ -290,7 +288,7 @@ export default function InquiryModal({
         className || "top-38 right-40"
       }`}
     >
-      <div className="relative bg-white rounded-lg p-[20px] max-w-md w-full min-w-[260px]">
+      <div className="relative bg-white rounded-lg p-[20px] max-w-md w-full min-w-[260px] shadow-[0_10px_40px_rgba(0,0,0,0.40)]">
         <div className="flex flex-col items-center justify-center gap-[15px] ">
           <div className="text-center">
             <h2 className="text-[22px] font-bold">문의하기</h2>
@@ -325,6 +323,15 @@ export default function InquiryModal({
               { label: "이메일", value: "email" },
             ]}
             radioDirection="horizontal"
+            showInputBelowRadio={true}
+            inputValue={formData.contact}
+            onInputChange={handleContactChange}
+            inputPlaceholder={
+              formData.contactType === "phone"
+                ? "연락 받을 연락처를 입력 해주세요."
+                : "이메일을 입력해주세요."
+            }
+            inputError={errors.contact}
           />
 
           <Input

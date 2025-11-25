@@ -5,13 +5,19 @@ export default function Footer() {
   return (
     <div className="w-full flex flex-col  py-[30px] px-[40px]">
       <div className="flex gap-[30px] items-center justify-center">
-        <Image
-          src="../../../googleButton.svg"
-          alt="googleButton"
-          width={120}
-          height={40}
-          priority
-        />
+        <a
+          href="https://play.google.com/store/apps/details?id=com.primeplay.potplay"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Image
+            src="../../../googleButton.svg"
+            alt="googleButton"
+            width={120}
+            height={40}
+            priority
+          />
+        </a>
         <Image
           src="../../../appstoreButton.svg"
           alt="appstoreButton"
