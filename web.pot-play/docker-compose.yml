@@ -1,0 +1,24 @@
+// docker-compose.yml
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pot-play-landing
+    ports:
+      - "3030:3000"
+    environment:
+      - NODE_ENV=production
+      # 백엔드 API URL (.env 파일에서 설정 필요)
+      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+    restart: unless-stopped
+    # 백엔드와 통신을 위해 동일한 네트워크 사용
+    networks:
+      - admin-network
+
+networks:
+  admin-network:
+    external: true
+    name: pot-play-backend_default  # 운영 서버용
+    # name: pot-play-backend-develop_default  # 개발 서버용

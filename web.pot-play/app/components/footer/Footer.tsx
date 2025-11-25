@@ -10,12 +10,14 @@ export default function Footer() {
           alt="googleButton"
           width={120}
           height={40}
+          priority
         />
         <Image
           src="../../../appstoreButton.svg"
           alt="appstoreButton"
           width={120}
           height={40}
+          priority
         />
       </div>
       <div className="pt-[40px]">

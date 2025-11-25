@@ -4,6 +4,8 @@ import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Footer from "./components/footer/Footer";
 import InquiryModal from "./components/modal/InquiryModal";
+import Images from "./components/images/Images";
+import { useCallback } from "react";
 
 export default function Home() {
   const imageNumbers = Array.from({ length: 13 }, (_, i) => i + 1);
@@ -12,10 +14,12 @@ export default function Home() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const imageRefs = useRef<(HTMLDivElement | null)[]>([]);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const lastIndexRef = useRef(0);
   const [isHovered, setIsHovered] = useState(false);
   const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const isScrollingRef = useRef(false);
   const menuClickRef = useRef(false);
+  const isWheelScrollingRef = useRef(false);
   const [isInquiryModalOpen, setIsInquiryModalOpen] = useState(false);
   const navList = [
     { id: 1, name: "문제정의" },
@@ -51,62 +55,78 @@ export default function Home() {
 
   useEffect(() => {
     let scrollTimeout: NodeJS.Timeout;
-    let lastIndex = currentIndex;
+    // 초기값 설정 (의존성 배열에 currentIndex를 넣지 않는 이유: 이벤트 리스너 재등록 방지)
+    lastIndexRef.current = currentIndex;
+    let rafId: number | null = null;
 
     const handleScroll = () => {
-      const container = scrollContainerRef.current;
-      if (!container) return;
-
-      const scrollTop = container.scrollTop;
-      const windowHeight = container.clientHeight;
-      const centerY = scrollTop + windowHeight / 2;
-
-      // 각 이미지의 중앙까지의 거리를 계산
-      let closestIndex = 0;
-      let closestDistance = Infinity;
-
-      imageRefs.current.forEach((ref, index) => {
-        if (!ref) return;
-
-        const rect = ref.getBoundingClientRect();
-        const containerRect = container.getBoundingClientRect();
-        const imageCenterY =
-          rect.top - containerRect.top + scrollTop + rect.height / 2;
-        const distance = Math.abs(centerY - imageCenterY);
-
-        if (distance < closestDistance) {
-          closestDistance = distance;
-          closestIndex = index;
-        }
-      });
-
-      if (lastIndex !== closestIndex) {
-        setCurrentIndex(closestIndex);
-        lastIndex = closestIndex;
+      // 기존 raf 취소
+      if (rafId !== null) {
+        cancelAnimationFrame(rafId);
       }
 
-      // 스크롤 중 플래그 설정
-      isScrollingRef.current = true;
-      clearTimeout(scrollTimeout);
+      // requestAnimationFrame으로 다음 프레임에 처리
+      rafId = requestAnimationFrame(() => {
+        const container = scrollContainerRef.current;
+        if (!container) return;
 
-      // 스크롤이 멈춘 후 플래그 해제
-      scrollTimeout = setTimeout(() => {
-        isScrollingRef.current = false;
-        // 스크롤이 끝나면 메뉴 클릭 플래그도 해제하여 호버가 정상적으로 작동하도록
-        menuClickRef.current = false;
-      }, 300);
+        const scrollTop = container.scrollTop;
+        const windowHeight = container.clientHeight;
+        const centerY = scrollTop + windowHeight / 2;
+
+        // 각 이미지의 중앙까지의 거리를 계산
+        let closestIndex = 0;
+        let closestDistance = Infinity;
+
+        imageRefs.current.forEach((ref, index) => {
+          if (!ref) return;
+
+          const rect = ref.getBoundingClientRect();
+          const containerRect = container.getBoundingClientRect();
+          const imageCenterY =
+            rect.top - containerRect.top + scrollTop + rect.height / 2;
+          const distance = Math.abs(centerY - imageCenterY);
+
+          if (distance < closestDistance) {
+            closestDistance = distance;
+            closestIndex = index;
+          }
+        });
+
+        // 인덱스가 실제로 변경되었을 때만 state 업데이트
+        if (lastIndexRef.current !== closestIndex) {
+          setCurrentIndex(closestIndex);
+          lastIndexRef.current = closestIndex;
+        }
+
+        // 스크롤 중 플래그 설정
+        isScrollingRef.current = true;
+        clearTimeout(scrollTimeout);
+
+        // 스크롤이 멈춘 후 플래그 해제
+        scrollTimeout = setTimeout(() => {
+          isScrollingRef.current = false;
+          // 스크롤이 끝나면 메뉴 클릭 플래그도 해제하여 호버가 정상적으로 작동하도록
+          menuClickRef.current = false;
+        }, 300);
+      });
     };
 
     const container = scrollContainerRef.current;
     if (container) {
-      container.addEventListener("scroll", handleScroll);
+      // passive: true로 스크롤 성능 최적화
+      container.addEventListener("scroll", handleScroll, { passive: true });
       handleScroll(); // 초기 실행
 
       return () => {
         container.removeEventListener("scroll", handleScroll);
         clearTimeout(scrollTimeout);
+        if (rafId !== null) {
+          cancelAnimationFrame(rafId);
+        }
       };
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -129,6 +149,56 @@ export default function Home() {
       container.scrollTo({ top: targetScroll, behavior: "smooth" });
     }
   };
+
+  const handleRefSet = useCallback(
+    (index: number, el: HTMLDivElement | null) => {
+      imageRefs.current[index] = el;
+    },
+    []
+  );
+
+  // 휠 이벤트 제어: 한 페이지만 이동하도록 제한
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    const handleWheel = (e: WheelEvent) => {
+      // 스크롤 중이면 무시
+      if (isWheelScrollingRef.current) {
+        e.preventDefault();
+        return;
+      }
+
+      // 기본 스크롤 동작 막기
+      e.preventDefault();
+
+      const deltaY = e.deltaY;
+      const currentIdx = lastIndexRef.current;
+
+      // 아래로 스크롤 (양수)
+      if (deltaY > 0 && currentIdx < imageNumbers.length - 1) {
+        isWheelScrollingRef.current = true;
+        scrollToImage(currentIdx + 1);
+        setTimeout(() => {
+          isWheelScrollingRef.current = false;
+        }, 600); // smooth scroll 시간
+      }
+      // 위로 스크롤 (음수)
+      else if (deltaY < 0 && currentIdx > 0) {
+        isWheelScrollingRef.current = true;
+        scrollToImage(currentIdx - 1);
+        setTimeout(() => {
+          isWheelScrollingRef.current = false;
+        }, 600);
+      }
+    };
+
+    container.addEventListener("wheel", handleWheel, { passive: false });
+
+    return () => {
+      container.removeEventListener("wheel", handleWheel);
+    };
+  }, [imageNumbers.length]);
 
   return (
     <div
@@ -279,135 +349,25 @@ export default function Home() {
             </ul>
           </div>
         )}
+
         {/* 이미지들 */}
         <div className="relative">
-          {imageNumbers.map((num, index) => {
-            // 6번, 7번은 5번 배경 사용
-            const backgroundImagePath =
-              num === 6 || num === 7 ? `/5.jpg` : `/${num}.jpg`;
-            const overlayImagePath = `/${num}-1.png`;
-
-            return (
-              <div
-                key={num}
-                ref={(el) => {
-                  imageRefs.current[index] = el;
-                }}
-                className={`relative w-full h-screen snap-start flex-shrink-0 ${
-                  index === imageNumbers.length - 1 ? "" : "snap-always"
-                }`}
-                style={{
-                  scrollSnapAlign: "start",
-                  scrollSnapStop:
-                    index === imageNumbers.length - 1 ? "normal" : "always",
-                  willChange: "transform", // GPU 가속
-                }}
-              >
-                {/* 각 페이지의 로고와 선 - absolute로 배치 */}
-                <div className="absolute top-4 left-10 z-50">
-                  <Image
-                    src="/pot-play-logo.svg"
-                    alt="Pot Play Logo"
-                    height={20}
-                    width={140}
-                    className={`transition-all duration-300 ${
-                      index === 0 ? "brightness-0 invert" : "brightness-0"
-                    }`}
-                  />
-                </div>
-                {/* 1번 페이지가 아닐 때만 선 표시 */}
-                {index !== 0 && (
-                  <div className="absolute left-0 right-0 top-[70px] px-[40px] z-50">
-                    <div className="w-full h-[1px] bg-black"></div>
-                  </div>
-                )}
-
-                <div className="relative w-full h-full flex items-center justify-center">
-                  <div className="relative w-full h-full max-w-[1920px]">
-                    <Image
-                      src={backgroundImagePath}
-                      alt={num.toString()}
-                      fill
-                      className="object-cover"
-                      sizes="1920px"
-                      priority={index < 3} // 처음 3개 이미지는 우선 로딩
-                      {...(index >= 3 && { loading: "lazy" })}
-                      onError={(
-                        e: React.SyntheticEvent<HTMLImageElement, Event>
-                      ) => {
-                        console.error(
-                          `배경 이미지 로드 실패: ${backgroundImagePath}`,
-                          e
-                        );
-                      }}
-                    />
-                  </div>
-                  {overlayImageNumbers.includes(num) && (
-                    <div
-                      className={`absolute inset-0 z-10 pointer-events-none ${
-                        num === 1
-                          ? "flex items-end justify-start"
-                          : "flex items-center justify-center"
-                      }`}
-                    >
-                      {num === 1 ? (
-                        <div className="p-10">
-                          <Image
-                            src={overlayImagePath}
-                            alt={`${num}-1`}
-                            width={1200}
-                            height={1200}
-                            className="object-contain"
-                            style={{ width: "auto", height: "auto" }}
-                            loading={index === 0 ? "eager" : "lazy"}
-                            onError={(
-                              e: React.SyntheticEvent<HTMLImageElement, Event>
-                            ) => {
-                              console.error(
-                                `오버레이 이미지 로드 실패: ${overlayImagePath}`,
-                                e
-                              );
-                            }}
-                          />
-                        </div>
-                      ) : (
-                        <div
-                          className={`relative flex items-center justify-center ${
-                            num === 3 || num === 5 || num === 6 || num === 7
-                              ? "w-[100%] h-[100%]"
-                              : "w-[80%] h-[80%]"
-                          }`}
-                        >
-                          <Image
-                            src={overlayImagePath}
-                            alt={`${num}-1`}
-                            fill
-                            className="object-contain"
-                            loading={index === 0 ? "eager" : "lazy"}
-                            onError={(
-                              e: React.SyntheticEvent<HTMLImageElement, Event>
-                            ) => {
-                              console.error(
-                                `오버레이 이미지 로드 실패: ${overlayImagePath}`,
-                                e
-                              );
-                            }}
-                          />
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </div>
-            );
-          })}
+          <Images
+            imageNumbers={imageNumbers}
+            overlayImageNumbers={overlayImageNumbers}
+            onRefSet={handleRefSet}
+          />
         </div>
+
+        {/* 문의 모달 버튼 */}
+
         <Image
           src={isInquiryModalOpen ? "/Xcircle.svg" : "/send.svg"}
           alt={isInquiryModalOpen ? "close" : "send"}
           width={48}
           height={48}
-          className="fixed bottom-30 right-20 z-50 cursor-pointer"
+          priority
+          className="fixed bottom-[12%] right-[8%] z-50"
           onClick={() => {
             if (isInquiryModalOpen) {
               setIsInquiryModalOpen(false);
@@ -419,7 +379,10 @@ export default function Home() {
         <InquiryModal
           isOpen={isInquiryModalOpen}
           onClose={() => setIsInquiryModalOpen(false)}
+          className="fixed bottom-[16%] right-[10%] z-50"
         />
+
+        {/* 푸터 */}
         <div
           className="snap-start flex-shrink-0"
           style={{ scrollSnapStop: "normal" }}
