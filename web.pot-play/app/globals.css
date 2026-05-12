@@ -3,23 +3,90 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #05060a;
+  --foreground: #e8eaf0;
+  --app-safe-top: env(safe-area-inset-top, 0px);
+  --app-safe-bottom: env(safe-area-inset-bottom, 0px);
+  --logo-zone: calc(
+    var(--app-safe-top) + clamp(5.375rem, 12vmin + 2.5rem, 7rem)
+  );
+  --m-fluid-label: clamp(0.8125rem, 3.4vmin, 1rem);
+  --m-fluid-h2: clamp(1.1875rem, 5.5vmin, 1.5rem);
+  --m-fluid-card-title: clamp(0.875rem, 3.6vmin, 1.0625rem);
+  --m-fluid-card-body: clamp(0.78125rem, 3.05vmin, 0.9375rem);
+  --m-fluid-sol-q: clamp(0.96875rem, 4vmin, 1.25rem);
+  --m-fluid-sol-a: clamp(0.84375rem, 3.2vmin, 1rem);
+  --m-img-h: clamp(5.25rem, 21vmin, 7.75rem);
+  /* 문제의 근거 카드: 부제·본문 — vw+vmin 혼합으로 가로·세로 비율 반영, 하한 14~15px */
+  --m-evidence-subtitle: clamp(
+    0.875rem,
+    0.3rem + 3vw + 1.9vmin,
+    1.125rem
+  );
+  --m-evidence-title: clamp(
+    0.9375rem,
+    0.2rem + 3.5vw + 2.1vmin,
+    1.3125rem
+  );
+  /* 문제의 근거 모바일: 텍스트(--m-evidence-*)처럼 vw+vmin으로 같이 스케일 (Problem보다 살짝만 큼) */
+  --m-evidence-img-h: clamp(
+    5.375rem,
+    1.75rem + 6vw + 12vmin,
+    8.75rem
+  );
+  /* Revenue Model 카드 답변: 짧은 세로·작은 화면에서만 살짝 축소 (vmin+vw) */
+  --m-revenue-q: clamp(
+    0.875rem,
+    0.28rem + 2.5vmin + 0.55vw,
+    1.0625rem
+  );
+  --m-revenue-a-bold: clamp(
+    0.9375rem,
+    0.32rem + 2.45vmin + 0.45vw,
+    1.125rem
+  );
+  --m-revenue-body: clamp(
+    0.875rem,
+    0.3rem + 2.2vmin + 0.4vw,
+    1.0625rem
+  );
 }
 
+<<<<<<< HEAD
 @media (prefers-color-scheme: dark) {
+=======
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: light) {
+>>>>>>> c923c45 (feat: 팟 플레이 퍼블리싱)
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #ffffff;
+    --foreground: #0b1020;
+  }
+}
+
+html,
+body {
+  height: 100%;
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --logo-zone: max(7rem, calc(var(--app-safe-top) + 6.5rem));
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
 }
 
+<<<<<<< HEAD
 /* 커스텀 라디오 버튼 스타일 */
 input[type="radio"].radio {
   appearance: none;
@@ -56,3 +123,9 @@ input[type="radio"].radio:checked::after {
   border-radius: 50%;
   background-color: #000000;
 }
+=======
+::selection {
+  background: color-mix(in oklab, #7c3aed 35%, transparent);
+}
+
+>>>>>>> c923c45 (feat: 팟 플레이 퍼블리싱)
