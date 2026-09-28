@@ -1,5 +1,3 @@
-"use client";
-
 interface InputProps {
   title: string;
   type: "text" | "select" | "textarea" | "radio";

@@ -1,9 +1,10 @@
-/* eslint-disable @typescript-eslint/no-require-imports */
-/** @type {import('tailwindcss').Config} */
-const daisyui = require("daisyui");
+import daisyui from "daisyui";
 
-module.exports = {
+/** @type {import('tailwindcss').Config} */
+export default {
   content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
   ],
@@ -12,7 +13,7 @@ module.exports = {
   },
   plugins: [daisyui],
   daisyui: {
-    themes: false, // 테마 비활성화 (필요시 활성화)
+    themes: false,
     darkTheme: false,
     base: true,
     styled: true,

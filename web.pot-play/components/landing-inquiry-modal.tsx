@@ -1,5 +1,3 @@
-"use client";
-
 import { useCallback, useEffect, useState } from "react";
 
 const PHONE_DIGITS_OK = /^(01[016789]\d{7,8}|02\d{7,8}|0[3-9]\d{8,9})$/;
@@ -53,7 +51,7 @@ type FieldErrors = {
 };
 
 const inputBase =
-  "placeholder:text-[14px] w-full border border-[#D9D9D9] rounded-[8px] px-[6px] py-[6px] focus:outline-none focus:ring-2 focus:ring-blue-500";
+  "text-[14px] text-[#1E1E1E] placeholder:text-[14px] placeholder:text-[#9E9E9E] w-full border border-[#D9D9D9] rounded-[8px] bg-white px-[6px] py-[6px] focus:outline-none focus:ring-2 focus:ring-blue-500";
 
 function FormField({
   title,
@@ -148,8 +146,8 @@ function FormField({
           <select
             value={value}
             onChange={(e) => onChange(e.target.value)}
-            className={`w-full appearance-none border border-[#D9D9D9] rounded-[8px] px-[6px] py-[6px] text-[14px] focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-              !value ? "text-[#757575]" : "text-[#1E1E1E]"
+            className={`w-full appearance-none border border-[#D9D9D9] rounded-[8px] bg-white px-[6px] py-[6px] text-[14px] focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+              !value ? "text-[#9E9E9E]" : "text-[#1E1E1E]"
             }`}
           >
             {placeholder ? (
@@ -350,11 +348,11 @@ export function LandingInquiryModal({
 
   return (
     <div className="fixed bottom-[16%] right-[12%] z-50 flex items-center justify-center">
-      <div className="relative min-w-[260px] w-full max-w-md rounded-lg bg-white p-[20px] shadow-[0_10px_40px_rgba(0,0,0,0.40)]">
+      <div className="relative min-w-[260px] w-full max-w-md rounded-lg bg-white p-[20px] text-[#1E1E1E] shadow-[0_10px_40px_rgba(0,0,0,0.40)]">
         <div className="flex flex-col items-center justify-center gap-[15px]">
           <div className="text-center">
-            <h2 className="text-[22px] font-bold">문의하기</h2>
-            <span className="mt-[2px] block text-[14px] text-[#757575]">
+            <h2 className="text-[22px] font-bold text-[#1E1E1E]">문의하기</h2>
+            <span className="mt-[2px] block text-[14px] text-[#616161]">
               빠른 시일 내 연락 드리겠습니다.
             </span>
           </div>
@@ -414,7 +412,7 @@ export function LandingInquiryModal({
             <button
               type="button"
               onClick={onClose}
-              className="w-full rounded-[6px] bg-[#E0E0E0]"
+              className="w-full rounded-[6px] bg-[#E0E0E0] py-[7px] text-[#1E1E1E]"
             >
               닫기
             </button>

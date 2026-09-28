@@ -1,7 +1,4 @@
-"use client";
-
-import axios from "axios";
-import { useState, useCallback } from "react"; // useCallback 추가
+import { useState, useCallback } from "react";
 import Input from "../input/Input";
 
 interface InquiryModalProps {
@@ -255,10 +252,12 @@ export default function InquiryModal({
         content: formData.inquiryContent,
       };
 
-      await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/inquiry/landing`,
-        requestData
-      );
+      const res = await fetch("/api/inquiry/landing", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(requestData),
+      });
+      if (!res.ok) throw new Error("upstream failed");
       alert("문의가 성공적으로 전송되었습니다.");
       onClose();
       setFormData({

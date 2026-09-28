@@ -2,20 +2,19 @@
   "name": "re.web.pot-play",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
-    "dev": "next dev -p 3001",
-    "dev:local": "NEXT_PUBLIC_API_URL=http://localhost:3000/api/v1 next dev -p 3001",
-    "dev:dev": "NEXT_PUBLIC_API_URL=https://dev-pot-api.pot-play.com/api/v1 next dev -p 3001",
-    "build": "next build",
-    "build:dev": "NEXT_PUBLIC_API_URL=https://dev-pot-api.pot-play.com/api/v1 next build",
-    "build:prod": "NEXT_PUBLIC_API_URL=https://pot-api.pot-play.com/api/v1 next build",
-    "start": "next start",
+    "dev": "vite --port 3001",
+    "dev:local": "INQUIRY_UPSTREAM_URL=http://localhost:3000/api/v1/inquiry/landing vite --port 3001",
+    "dev:dev": "INQUIRY_UPSTREAM_URL=https://dev-pot-api.pot-play.com/api/v1/inquiry/landing vite --port 3001",
+    "build": "tsc --noEmit && vite build",
+    "build:dev": "tsc --noEmit && vite build",
+    "build:prod": "tsc --noEmit && vite build",
+    "preview": "vite preview --port 3001",
     "lint": "eslint"
   },
   "dependencies": {
-    "axios": "^1.13.2",
     "daisyui": "^5.5.5",
-    "next": "16.0.3",
     "react": "19.2.0",
     "react-dom": "19.2.0"
   },
@@ -23,11 +22,12 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "^5.0.4",
     "autoprefixer": "^10.4.22",
     "eslint": "^9",
-    "eslint-config-next": "16.0.3",
     "postcss": "^8.5.6",
     "tailwindcss": "^3.4.18",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vite": "^7.1.7"
   }
 }

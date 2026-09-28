@@ -1,6 +1,3 @@
-"use client";
-import Image from "next/image";
-
 export default function Footer() {
   return (
     <div className="w-full flex flex-col  py-[30px] px-[40px]">
@@ -10,20 +7,18 @@ export default function Footer() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          <Image
-            src="../../../googleButton.svg"
+          <img
+            src="/googleButton.svg"
             alt="googleButton"
             width={120}
             height={40}
-            priority
           />
         </a>
-        <Image
-          src="../../../appstoreButton.svg"
+        <img
+          src="/appstoreButton.svg"
           alt="appstoreButton"
           width={120}
           height={40}
-          priority
         />
       </div>
       <div className="pt-[40px]">

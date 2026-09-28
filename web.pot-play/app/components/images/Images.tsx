@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { memo } from "react";
 
 interface ImagesProps {
@@ -35,7 +34,7 @@ const Images = memo(function Images({
           >
             {/* 각 페이지의 로고와 선 */}
             <div className="absolute top-4 left-10 z-50">
-              <Image
+              <img
                 src="/pot-play-logo.svg"
                 alt="Pot Play Logo"
                 height={20}
@@ -53,16 +52,11 @@ const Images = memo(function Images({
 
             <div className="relative w-full h-full flex items-center justify-center">
               <div className="relative w-full h-full max-w-[1920px]">
-                <Image
+                <img
                   src={backgroundImagePath}
                   alt={num.toString()}
-                  fill
-                  className="object-cover"
-                  sizes="1920px"
-                  priority
-                  onError={(
-                    e: React.SyntheticEvent<HTMLImageElement, Event>
-                  ) => {
+                  className="absolute inset-0 h-full w-full object-cover"
+                  onError={(e) => {
                     console.error(
                       `배경 이미지 로드 실패: ${backgroundImagePath}`,
                       e
@@ -80,17 +74,14 @@ const Images = memo(function Images({
                 >
                   {num === 1 ? (
                     <div className="p-10">
-                      <Image
+                      <img
                         src={overlayImagePath}
                         alt={`${num}-1`}
                         width={1200}
                         height={1200}
                         className="object-contain"
                         style={{ width: "auto", height: "auto" }}
-                        priority
-                        onError={(
-                          e: React.SyntheticEvent<HTMLImageElement, Event>
-                        ) => {
+                        onError={(e) => {
                           console.error(
                             `오버레이 이미지 로드 실패: ${overlayImagePath}`,
                             e
@@ -106,15 +97,11 @@ const Images = memo(function Images({
                           : "w-[80%] h-[80%]"
                       }`}
                     >
-                      <Image
+                      <img
                         src={overlayImagePath}
                         alt={`${num}-1`}
-                        fill
-                        className="object-contain"
-                        priority
-                        onError={(
-                          e: React.SyntheticEvent<HTMLImageElement, Event>
-                        ) => {
+                        className="absolute inset-0 h-full w-full object-contain"
+                        onError={(e) => {
                           console.error(
                             `오버레이 이미지 로드 실패: ${overlayImagePath}`,
                             e

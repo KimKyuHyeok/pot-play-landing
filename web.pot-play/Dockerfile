@@ -1,15 +1,18 @@
-
-FROM node:20-alpine
+FROM node:20-alpine AS build
 
 WORKDIR /app
 
-RUN corepack enable && corepack prepare pnpm@latest --activate
-
-COPY package.json pnpm-lock.yaml ./
-RUN pnpm install --frozen-lockfile
+COPY package.json package-lock.json ./
+RUN npm ci
 
 COPY . .
-RUN pnpm build
+RUN npm run build
+
+FROM nginx:1.27-alpine
+
+COPY nginx.conf.template /etc/nginx/templates/default.conf.template
+COPY --from=build /app/dist /usr/share/nginx/html
+
+ENV INQUIRY_UPSTREAM_URL=http://pot-play-backend-green:3000/api/v1/inquiry/landing
 
 EXPOSE 3000
-CMD ["pnpm", "start"]

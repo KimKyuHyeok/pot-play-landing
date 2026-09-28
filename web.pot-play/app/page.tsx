@@ -1,39 +1,3 @@
-"use client";
-
-<<<<<<< HEAD
-import { useState, useEffect, useRef } from "react";
-import Image from "next/image";
-import Footer from "./components/footer/Footer";
-import InquiryModal from "./components/modal/InquiryModal";
-import Images from "./components/images/Images";
-import { useCallback } from "react";
-
-export default function Home() {
-  const imageNumbers = Array.from({ length: 13 }, (_, i) => i + 1);
-  // 오버레이 이미지 번호 (1부터 13까지)
-  const overlayImageNumbers = Array.from({ length: 13 }, (_, i) => i + 1);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const imageRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const lastIndexRef = useRef(0);
-  const [isHovered, setIsHovered] = useState(false);
-  const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const isScrollingRef = useRef(false);
-  const menuClickRef = useRef(false);
-  const isWheelScrollingRef = useRef(false);
-  const [isInquiryModalOpen, setIsInquiryModalOpen] = useState(false);
-  const navList = [
-    { id: 1, name: "문제정의" },
-    { id: 2, name: "맞춤형 광고 솔루션" },
-    { id: 3, name: "광고 한눈에 보기" },
-    { id: 4, name: "핵심 요소" },
-    { id: 5, name: "유형 선택" },
-    { id: 6, name: "광고별 단가" },
-    { id: 7, name: "진행 방식" },
-    { id: 8, name: "활용 시나리오" },
-    { id: 9, name: "제안 포인트" },
-  ];
-=======
 import {
   Fragment,
   useCallback,
@@ -440,6 +404,27 @@ const PRICE_ROWS = [
   },
 ] as const;
 
+function PriceRowInnerBody({ row }: { row: (typeof PRICE_ROWS)[number] }) {
+  return (
+    <div className="flex min-h-0 w-full items-stretch gap-2 px-2 py-0.5 sm:min-h-[5.25rem] sm:gap-3 sm:px-3">
+      <div className="flex w-[6.75rem] shrink-0 items-center justify-center sm:w-[9.75rem]">
+        <h3 className="max-w-full text-pretty text-center text-sm font-bold leading-snug text-[#2979FF] sm:text-lg whitespace-pre-line">
+          {row.title}
+        </h3>
+      </div>
+      <div
+        className="w-[1.5px] shrink-0 self-stretch rounded-full bg-zinc-400/90"
+        aria-hidden
+      />
+      <div className="flex min-h-0 min-w-0 flex-1 items-center py-0.5">
+        <p className="w-full text-pretty text-left text-xs font-bold leading-relaxed text-zinc-800 sm:text-base whitespace-pre-line">
+          {row.body}
+        </p>
+      </div>
+    </div>
+  );
+}
+
 function LogoRow({
   lightLogo,
   showDivider = true,
@@ -630,7 +615,7 @@ function Screen({
   if (index === 2) {
     return (
       <section
-        className="relative h-dvh w-full snap-start snap-always overflow-hidden"
+        className="evidence-screen relative h-dvh w-full snap-start snap-always overflow-hidden"
         style={{ scrollSnapAlign: "start", scrollSnapStop: "always" }}
       >
         <div
@@ -654,15 +639,15 @@ function Screen({
 
           <div
             data-nested-scroll
-            className="mt-1 flex min-h-0 w-full flex-1 flex-col overflow-hidden pt-1 [-webkit-overflow-scrolling:touch] max-lg:min-h-0 max-lg:gap-1.5 max-lg:overflow-y-auto max-lg:overscroll-contain sm:max-lg:gap-2 lg:mt-auto lg:mb-10 lg:max-h-none lg:flex-none lg:gap-0 lg:overflow-y-auto lg:overscroll-contain lg:pt-6 xl:mb-16"
+            className="evidence-cards-stack mt-1 flex min-h-0 w-full flex-1 flex-col overflow-hidden pt-1 [-webkit-overflow-scrolling:touch] max-lg:min-h-0 max-lg:gap-1.5 max-lg:overflow-hidden sm:max-lg:gap-2 lg:mt-auto lg:mb-10 lg:max-h-none lg:flex-none lg:gap-0 lg:overflow-y-auto lg:overscroll-contain lg:pt-6 xl:mb-16"
           >
             <div className="flex min-h-0 w-full max-w-6xl flex-1 flex-col gap-1.5 max-lg:min-h-0 sm:max-lg:gap-2 lg:mx-auto lg:grid lg:flex-none lg:grid-cols-3 lg:gap-6">
               {EVIDENCE_CARDS.map((card, i) => (
                 <article
                   key={i}
-                  className="flex min-h-0 w-full flex-1 flex-col items-stretch overflow-hidden rounded-lg border border-black/10 bg-white/95 shadow-sm backdrop-blur-sm basis-0 max-lg:min-h-0 lg:h-[clamp(22rem,58vh,40rem)] lg:flex-none lg:gap-5 lg:rounded-2xl"
+                  className="evidence-card flex min-h-0 w-full flex-1 flex-col items-stretch overflow-hidden rounded-lg border border-black/10 bg-white/95 shadow-sm backdrop-blur-sm basis-0 max-lg:grid max-lg:[grid-template-rows:var(--m-evidence-img-h)_minmax(0,1fr)] max-lg:min-h-0 lg:flex lg:h-[clamp(22rem,58vh,40rem)] lg:flex-none lg:gap-5 lg:rounded-2xl"
                 >
-                  <div className="relative w-full shrink-0 overflow-hidden max-lg:h-[var(--m-evidence-img-h)] lg:h-[52%] lg:min-h-[8rem]">
+                  <div className="evidence-card-image relative w-full min-h-0 shrink-0 overflow-hidden max-lg:h-full lg:h-[52%] lg:min-h-[8rem]">
                     <img
                       alt=""
                       src={card.image}
@@ -671,11 +656,11 @@ function Screen({
                       decoding="async"
                     />
                   </div>
-                  <div className="flex min-h-0 min-w-0 flex-1 flex-col items-start justify-start gap-1 overflow-hidden px-2 py-1.5 text-left max-lg:gap-1 sm:max-lg:gap-1.5 sm:max-lg:px-2.5 sm:max-lg:py-2 lg:justify-start lg:gap-7 lg:px-4 lg:py-6">
-                    <p className="w-full min-w-0 shrink-0 text-pretty font-semibold leading-snug tracking-tight text-zinc-600 max-lg:[font-size:var(--m-evidence-subtitle)] lg:text-base lg:leading-normal lg:tracking-normal xl:text-lg">
+                  <div className="evidence-card-text flex min-h-0 min-w-0 flex-1 flex-col items-start justify-start gap-1 overflow-hidden px-2 py-1.5 text-left max-lg:gap-1 sm:max-lg:gap-1.5 sm:max-lg:px-2.5 sm:max-lg:py-2 lg:justify-start lg:gap-7 lg:px-4 lg:py-6">
+                    <p className="evidence-subtitle w-full min-w-0 shrink-0 text-pretty font-semibold tracking-tight text-zinc-600 max-lg:leading-[1.18] max-lg:tracking-tight lg:text-base lg:leading-normal lg:tracking-normal xl:text-lg">
                       {card.subtitle}
                     </p>
-                    <h3 className="line-clamp-6 w-full min-w-0 text-pretty text-left font-extrabold leading-snug text-black max-lg:[font-size:var(--m-evidence-title)] max-lg:leading-snug sm:max-lg:line-clamp-5 lg:line-clamp-none lg:text-xl xl:text-2xl">
+                    <h3 className="evidence-title min-h-0 w-full min-w-0 flex-1 text-pretty text-left font-extrabold text-black max-lg:leading-[1.14] max-lg:tracking-tight max-lg:[overflow-wrap:anywhere] max-lg:[text-wrap:balance] lg:line-clamp-none lg:text-xl lg:leading-snug xl:text-2xl">
                       {card.title}
                     </h3>
                   </div>
@@ -834,7 +819,15 @@ function Screen({
 
     return (
       <section
-        className="relative h-dvh w-full snap-start snap-always overflow-hidden"
+        className={`service-feature-screen relative h-dvh w-full snap-start snap-always overflow-hidden${
+          index === 5
+            ? " partner-deal-screen"
+            : index === 4 || index === 6
+              ? ` service-feature-tall-cards${
+                  index === 6 ? " mission-page-screen" : ""
+                }`
+              : ""
+        }`}
         style={{ scrollSnapAlign: "start", scrollSnapStop: "always" }}
       >
         <div
@@ -866,17 +859,41 @@ function Screen({
           {/* 헤더 아래 남은 높이만 사용 → 고정 vh로 잘리지 않음. 하단은 safe-area만 */}
           <div
             data-nested-scroll
-            className="flex min-h-0 flex-1 flex-col overflow-x-hidden overflow-y-auto overscroll-contain [-webkit-overflow-scrolling:touch] pb-[var(--app-safe-bottom)]"
+            className="flex min-h-0 flex-1 flex-col overflow-x-hidden overflow-y-hidden overscroll-none pb-[var(--app-safe-bottom)] max-lg:overflow-y-hidden"
           >
             <div className="flex min-h-0 flex-1 flex-col lg:min-h-0">
-              <div className="mx-auto flex min-h-0 w-full max-w-6xl flex-1 flex-col gap-4 pt-3 sm:gap-5 sm:pt-4 lg:flex-row lg:items-stretch lg:gap-6">
+              <div
+                className={`mx-auto flex min-h-0 w-full max-w-6xl flex-1 flex-col gap-4 pt-3 sm:gap-5 sm:pt-4 lg:flex-row lg:items-stretch lg:gap-6${
+                  index === 5 ? " partner-deal-mobile-layout" : ""
+                }`}
+              >
                 {/* 좌: 이미지 — lg에서 items-stretch + flex-1 래퍼로 실제 박스가 열 전체를 씀 (items-center만 쓰면 가로가 intrinsic에 막힘) */}
-                <div className="order-2 mt-auto flex min-h-0 w-full min-w-0 flex-col items-center justify-end lg:order-none lg:mt-0 lg:h-full lg:w-0 lg:min-w-0 lg:flex-[1.1] lg:items-stretch lg:justify-end">
-                  <div className="flex w-full min-h-0 max-w-full flex-col items-center justify-end max-lg:flex-none lg:flex-1 lg:items-stretch">
+                <div
+                  className={`order-2 mt-auto flex min-h-0 w-full min-w-0 flex-col items-center justify-end lg:order-none lg:mt-0 lg:h-full lg:w-0 lg:min-w-0 lg:flex-[1.1] lg:items-stretch lg:justify-end${
+                    index === 5
+                      ? " partner-deal-img-col"
+                      : index === 4 || index === 6
+                        ? " service-feature-hero-col"
+                        : ""
+                  }`}
+                >
+                  <div
+                    className={`flex w-full min-h-0 max-w-full flex-col items-center justify-end max-lg:flex-none lg:flex-1 lg:items-stretch${
+                      index === 5
+                        ? " partner-deal-img-inner"
+                        : index === 4 || index === 6
+                          ? " service-feature-hero-inner"
+                          : ""
+                    }`}
+                  >
                     <img
                       alt={serviceLayout.imgAlt}
                       src={serviceLayout.imgSrc}
-                      className="h-auto w-auto max-w-full shrink-0 object-contain object-bottom max-h-[min(58vh,38.5rem)] lg:min-h-0 lg:w-full lg:flex-1 lg:max-h-none lg:object-contain lg:object-bottom"
+                      className={
+                        index === 5
+                          ? "partner-deal-hero-img h-auto w-auto max-w-full shrink-0 object-contain lg:min-h-0 lg:w-full lg:flex-1 lg:max-h-[min(62vh,36rem)] lg:object-bottom"
+                          : "service-feature-hero-img h-auto w-auto max-w-full shrink-0 object-contain lg:min-h-0 lg:w-full lg:flex-1 lg:max-h-none lg:object-contain lg:object-bottom"
+                      }
                       loading="lazy"
                       decoding="async"
                     />
@@ -885,20 +902,30 @@ function Screen({
 
                 {/* 우: 카드 수만큼 세로 flex 분배 (2개·3개 동일) */}
                 <div
-                  className="order-1 flex min-h-0 w-full min-w-0 flex-1 flex-col gap-2 sm:gap-3 lg:order-none lg:box-border lg:h-full lg:w-0 lg:min-w-0 lg:flex-[0.9] lg:gap-5 lg:py-26"
+                  className={`order-1 flex min-h-0 w-full min-w-0 flex-1 flex-col gap-2 sm:gap-3 max-lg:justify-start lg:order-none lg:box-border lg:h-full lg:w-0 lg:min-w-0 lg:flex-[0.9] lg:gap-5 lg:py-26${
+                    index === 5
+                      ? " partner-deal-cards-col"
+                      : index === 4 || index === 6
+                        ? " service-feature-cards-col"
+                        : ""
+                  }`}
                   style={{ fontFamily: TABLET_GOTHIC_WIDE_STACK }}
                 >
                   {serviceLayout.cards.map((card) => (
                     <div
                       key={card.title}
-                      className="flex min-h-0 flex-1 basis-0 flex-col justify-center gap-1.5 overflow-y-auto rounded-xl border border-black/15 bg-white/90 px-5 py-2.5 shadow-sm backdrop-blur-sm sm:gap-2 sm:px-6 sm:py-3.5 lg:px-7"
+                      className="flex min-h-0 max-lg:flex-none max-lg:shrink-0 flex-col justify-center gap-1.5 overflow-hidden rounded-xl border border-black/15 bg-white/90 px-5 py-2.5 shadow-sm backdrop-blur-sm max-lg:px-4 sm:gap-2 sm:px-6 sm:py-3.5 lg:flex-1 lg:basis-0 lg:px-7"
                     >
-                      <p className="shrink-0 font-extrabold text-[#2979FF] max-lg:text-base max-lg:leading-snug lg:text-lg lg:leading-snug xl:text-xl">
-                        {card.title}
-                      </p>
-                      <p className="min-h-0 text-pretty font-bold leading-relaxed text-zinc-800 max-lg:text-[0.9375rem] sm:max-lg:text-base lg:text-base lg:leading-relaxed xl:text-[1.0625rem]">
-                        {card.body}
-                      </p>
+                      <div className="service-feature-text flex min-h-0 min-w-0 w-full flex-1 flex-col justify-center overflow-hidden px-0.5 max-lg:py-0 max-lg:flex-none sm:px-0 lg:flex-1">
+                        <div className="service-feature-text-inner flex min-h-0 w-full max-w-full flex-col justify-center gap-2 overflow-hidden sm:gap-3 lg:gap-2.5">
+                          <p className="service-feature-title shrink-0 font-extrabold text-[#2979FF] max-lg:leading-[1.12] lg:text-lg lg:leading-snug xl:text-xl">
+                            {card.title}
+                          </p>
+                          <p className="service-feature-body min-h-0 text-pretty font-bold leading-relaxed text-zinc-800 max-lg:leading-[1.14] max-lg:[overflow-wrap:anywhere] max-lg:[text-wrap:balance] lg:text-base lg:leading-relaxed xl:text-[1.0625rem] whitespace-pre-line">
+                            {card.body}
+                          </p>
+                        </div>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -913,7 +940,7 @@ function Screen({
   if (index === 7) {
     return (
       <section
-        className="relative h-dvh w-full snap-start snap-always overflow-hidden"
+        className="business-value-screen relative h-dvh w-full snap-start snap-always overflow-hidden"
         style={{ scrollSnapAlign: "start", scrollSnapStop: "always" }}
       >
         <div
@@ -933,32 +960,32 @@ function Screen({
             <h2 className="mt-1 text-balance font-bold leading-tight text-black max-lg:mt-0.5 max-lg:[font-size:var(--m-fluid-h2)] sm:mt-2 lg:mt-3 lg:text-4xl xl:text-5xl">
               가치 창출의 <span className="text-[#2979FF]">4가지 핵심 요소</span>
             </h2>
-            <p className="mx-auto mt-2 max-w-2xl text-pretty font-medium leading-relaxed text-zinc-600 max-lg:[font-size:var(--m-fluid-card-body)] sm:mt-2 lg:mt-2.5 lg:text-lg">
+            <p className="mx-auto mt-1 max-w-2xl text-pretty font-medium leading-relaxed text-zinc-600 max-lg:mt-1 max-lg:[font-size:var(--m-fluid-card-body)] sm:mt-2 lg:mt-2.5 lg:text-lg">
               POT-PLAY만의 광고 목표 핵심 요소입니다.
             </p>
           </header>
 
           <div
             data-nested-scroll
-            className="flex min-h-0 flex-1 flex-col overflow-x-hidden overflow-y-auto overscroll-contain [-webkit-overflow-scrolling:touch] pt-9 sm:pt-10 lg:pt-2.5"
+            className="business-value-scroll flex min-h-0 flex-1 flex-col overflow-x-hidden overflow-y-auto overscroll-contain [-webkit-overflow-scrolling:touch] pt-3 max-lg:pt-2 sm:pt-8 lg:pt-2.5"
           >
             <div className="mx-auto flex min-h-0 w-full max-w-6xl flex-1 flex-col justify-start lg:justify-center">
-              <div className="grid w-full auto-rows-auto grid-cols-1 gap-2.5 sm:gap-4 lg:h-[clamp(24rem,42dvh,31rem)] lg:grid-cols-2 lg:gap-7 lg:[grid-template-rows:repeat(2,minmax(0,1fr))]">
+              <div className="grid w-full auto-rows-auto grid-cols-1 gap-2 sm:gap-4 lg:h-[clamp(24rem,42dvh,31rem)] lg:grid-cols-2 lg:gap-7 lg:[grid-template-rows:repeat(2,minmax(0,1fr))]">
                 {BUSINESS_VALUE_ITEMS.map((item, i) => (
                   <div
                     key={item.title}
-                    className="flex min-h-0 min-w-0 items-center gap-4 overflow-y-auto rounded-2xl border border-black/10 bg-white/90 px-4 py-3 shadow-sm backdrop-blur-sm sm:gap-4 sm:px-5 sm:py-3.5 lg:gap-5 lg:px-7 lg:py-4"
+                    className="flex min-h-0 min-w-0 items-center gap-2.5 overflow-hidden rounded-2xl border border-black/10 bg-white/90 px-3 py-2 shadow-sm backdrop-blur-sm sm:gap-4 sm:px-5 sm:py-3.5 lg:gap-5 lg:px-7 lg:py-4"
                     aria-label={`핵심 요소 ${i + 1}: ${item.title}`}
                   >
-                    <div className="flex min-h-0 min-w-0 flex-1 flex-col justify-center gap-1.5 sm:gap-2">
-                      <p className="text-pretty font-extrabold leading-snug text-[#2979FF] max-lg:text-base sm:text-lg lg:text-[1.375rem] xl:text-[1.625rem]">
+                    <div className="flex min-h-0 min-w-0 flex-1 flex-col justify-center gap-1 sm:gap-2">
+                      <p className="text-pretty font-extrabold leading-snug text-[#2979FF] max-lg:text-[0.9375rem] sm:text-lg lg:text-[1.375rem] xl:text-[1.625rem]">
                         {item.title}
                       </p>
                       <p className="text-pretty font-semibold leading-relaxed text-zinc-700 max-lg:[font-size:var(--m-fluid-card-body)] sm:max-lg:text-[0.9375rem] lg:text-[1.0625rem] lg:font-medium xl:text-[1.125rem]">
                         {item.body}
                       </p>
                     </div>
-                    <div className="flex h-[5.375rem] w-[5.375rem] shrink-0 items-center justify-center rounded-full bg-[#eee] sm:h-[6rem] sm:w-[6rem] lg:h-[7.5rem] lg:w-[7.5rem]">
+                    <div className="flex h-[4.25rem] w-[4.25rem] shrink-0 items-center justify-center rounded-full bg-[#eee] sm:h-[6rem] sm:w-[6rem] lg:h-[7.5rem] lg:w-[7.5rem]">
                       <img
                         src={item.icon}
                         alt=""
@@ -1016,7 +1043,7 @@ function Screen({
   if (index === 9) {
     return (
       <section
-        className="relative h-dvh w-full snap-start snap-always overflow-hidden"
+        className="price-ads-screen relative h-dvh w-full snap-start snap-always overflow-hidden"
         style={{ scrollSnapAlign: "start", scrollSnapStop: "always" }}
       >
         <div
@@ -1038,41 +1065,38 @@ function Screen({
             </h2>
           </header>
 
-          <div className="flex min-h-0 flex-1 flex-col justify-start pt-1 pb-3 max-lg:min-h-0 max-lg:pb-2 lg:justify-center lg:py-6 xl:py-8">
-            <div className="mx-auto flex w-full max-w-5xl flex-col gap-6 sm:gap-8 max-lg:gap-3">
+          <div
+            data-nested-scroll
+            className="flex min-h-0 flex-1 flex-col overflow-x-hidden overflow-y-auto overscroll-contain [-webkit-overflow-scrolling:touch] pb-2 pt-1 max-lg:pb-1 max-lg:pt-0.5"
+          >
+            <div className="mx-auto flex w-full min-h-0 max-w-5xl flex-col gap-4 sm:gap-8 max-lg:gap-2">
               {PRICE_ROWS.map((row) => (
-                <div
-                  key={row.slug}
-                  className="flex min-h-0 w-full items-center gap-2.5 sm:gap-3 max-lg:flex-col max-lg:items-stretch max-lg:gap-2.5"
-                >
-                  <span className="flex w-fit shrink-0 items-center justify-center rounded-full bg-[#2979FF] px-3 py-1.5 text-center text-xs font-bold leading-tight tracking-wide text-white sm:px-3.5 sm:py-2 sm:text-sm max-lg:max-w-[min(100%,18rem)] max-lg:self-start lg:self-center lg:h-[4.85rem] lg:w-[13rem] lg:px-4 lg:text-3xl lg:leading-none">
-                    {row.label}
-                  </span>
-                  <div
-                    className="pointer-events-none hidden h-1 w-24 shrink-0 bg-[radial-gradient(circle_closest-side,rgb(113_113_122)_1.5px,transparent_1.65px)] bg-[length:0.4375rem_100%] bg-center [background-repeat:repeat-x] opacity-85 sm:h-1 sm:w-32 sm:bg-[length:0.5rem_100%] lg:block"
-                    aria-hidden
-                  />
-                  <div className="flex h-[5.75rem] min-h-0 min-w-0 flex-1 items-center overflow-hidden rounded-xl border border-zinc-400/50 bg-white/75 py-1.5 shadow-sm backdrop-blur-sm sm:h-[7rem] sm:rounded-[1.125rem] sm:py-2 max-lg:h-auto max-lg:min-h-[4.5rem] max-lg:w-full">
-                    <div className="max-h-full min-h-0 w-full overflow-y-auto">
-                      <div className="flex min-h-[4rem] w-full items-stretch gap-2.5 pl-2.5 pr-2.5 sm:min-h-[5.25rem] sm:gap-3 sm:pl-3 sm:pr-3">
-                        <div className="flex w-[7.5rem] shrink-0 items-center justify-center sm:w-[9.75rem]">
-                          <h3 className="max-w-full text-pretty text-center text-base font-bold leading-snug text-[#2979FF] sm:text-lg whitespace-pre-line">
-                            {row.title}
-                          </h3>
-                        </div>
-                        <div
-                          className="w-[1.5px] shrink-0 self-stretch rounded-full bg-zinc-400/90"
-                          aria-hidden
-                        />
-                        <div className="flex min-h-0 min-w-0 flex-1 items-center py-0.5">
-                          <p className="w-full text-pretty text-left text-sm font-bold leading-relaxed text-zinc-800 sm:text-base whitespace-pre-line">
-                            {row.body}
-                          </p>
-                        </div>
+                <Fragment key={row.slug}>
+                  <div className="relative w-full min-h-0 lg:hidden">
+                    <div className="relative overflow-hidden rounded-xl border border-zinc-400/50 bg-white/75 py-2 shadow-sm backdrop-blur-sm sm:rounded-[1.125rem]">
+                      <span className="absolute left-2 top-2 z-10 max-w-[calc(100%-1rem)] rounded-full bg-[#2979FF] px-2 py-0.5 text-left text-[0.625rem] font-bold leading-tight tracking-wide text-white">
+                        {row.label}
+                      </span>
+                      <div className="px-2 pb-1 pt-7">
+                        <PriceRowInnerBody row={row} />
                       </div>
                     </div>
                   </div>
-                </div>
+                  <div className="hidden min-h-0 w-full items-center gap-3 lg:flex lg:gap-3">
+                    <span className="flex h-[4.85rem] w-[13rem] shrink-0 items-center justify-center self-center rounded-full bg-[#2979FF] px-4 text-center text-3xl font-bold leading-none tracking-wide text-white">
+                      {row.label}
+                    </span>
+                    <div
+                      className="pointer-events-none hidden h-1 w-24 shrink-0 bg-[radial-gradient(circle_closest-side,rgb(113_113_122)_1.5px,transparent_1.65px)] bg-[length:0.4375rem_100%] bg-center [background-repeat:repeat-x] opacity-85 sm:h-1 sm:w-32 sm:bg-[length:0.5rem_100%] lg:block"
+                      aria-hidden
+                    />
+                    <div className="flex h-[7rem] min-h-0 min-w-0 flex-1 items-center overflow-hidden rounded-[1.125rem] border border-zinc-400/50 bg-white/75 py-2 shadow-sm backdrop-blur-sm">
+                      <div className="max-h-full min-h-0 w-full overflow-y-auto overflow-x-hidden">
+                        <PriceRowInnerBody row={row} />
+                      </div>
+                    </div>
+                  </div>
+                </Fragment>
               ))}
             </div>
           </div>
@@ -1084,7 +1108,7 @@ function Screen({
   if (index === 10) {
     return (
       <section
-        className="relative h-dvh w-full snap-start snap-always overflow-hidden"
+        className="how-action-screen relative h-dvh w-full snap-start snap-always overflow-hidden"
         style={{ scrollSnapAlign: "start", scrollSnapStop: "always" }}
       >
         <div
@@ -1097,24 +1121,27 @@ function Screen({
         />
         <LogoRow lightLogo={false} />
         <div className="relative z-10 flex h-full min-h-0 w-full max-h-dvh flex-col overflow-hidden px-[clamp(0.75rem,4vw,1rem)] pb-[var(--app-safe-bottom)] pt-[var(--logo-zone)] sm:px-6 lg:px-8">
-          <header className="mx-auto w-full max-w-4xl shrink-0 text-center max-md:pb-0">
+          <header className="mx-auto w-full max-w-4xl shrink-0 text-center max-lg:pb-0 max-lg:pt-0 max-md:pb-0">
             <p className="font-extrabold tracking-wide text-[#2979FF] max-lg:[font-size:var(--m-fluid-label)] lg:text-lg">
               How to Action
             </p>
-            <h2 className="mt-1 text-balance font-bold leading-tight text-black max-lg:mt-0.5 max-lg:[font-size:var(--m-fluid-h2)] sm:mt-2 lg:mt-3 lg:text-4xl xl:text-5xl">
+            <h2 className="mt-0.5 text-balance font-bold leading-tight text-black max-lg:mt-0.5 max-lg:leading-[1.15] max-lg:[font-size:var(--m-fluid-h2)] sm:mt-1.5 lg:mt-3 lg:leading-tight lg:text-4xl xl:text-5xl">
               광고 진행 방식
             </h2>
-            <p className="mx-auto mt-0 max-w-2xl text-pretty font-medium leading-relaxed text-zinc-600 max-md:mt-1 max-lg:[font-size:var(--m-fluid-card-body)] md:mt-2 lg:mt-3 lg:text-lg">
+            <p className="mx-auto mt-0 max-w-2xl text-pretty font-medium leading-snug text-zinc-600 max-lg:mt-1 max-lg:leading-snug max-lg:[font-size:var(--m-fluid-card-body)] md:mt-2 lg:mt-3 lg:leading-relaxed lg:text-lg">
               업체와 상품에 맞춰 광고 커스터마이징을 거쳐 원하는 목표에 도달합니다.
             </p>
           </header>
 
-          <div className="flex min-h-0 flex-1 flex-col justify-start overflow-hidden pb-2 pt-0 max-md:min-h-0 max-md:pt-2 md:justify-center md:pb-0 md:pt-6 lg:pt-6">
-            <div className="mx-auto flex w-full min-w-0 max-w-md flex-col items-stretch gap-y-2 px-2 py-0 max-md:max-h-full max-md:overflow-hidden max-md:gap-y-1.5 md:max-w-[90rem] md:flex-row md:flex-nowrap md:items-center md:justify-center md:gap-x-2.5 md:gap-y-0 md:overflow-x-auto md:overflow-y-visible md:px-1 md:py-9 lg:py-10">
+          <div className="flex min-h-0 flex-1 flex-col justify-start overflow-hidden pb-0 pt-0 max-lg:min-h-0 max-lg:pb-0 max-lg:pt-0.5 md:justify-center md:pb-0 md:pt-6 lg:pt-6">
+            <div
+              data-nested-scroll
+              className="how-action-scroll mx-auto flex w-full min-h-0 min-w-0 max-w-md flex-col items-stretch gap-y-1 overflow-y-auto overscroll-contain px-1.5 py-0 [-webkit-overflow-scrolling:touch] max-lg:flex-1 max-lg:min-h-0 max-lg:overflow-y-auto max-lg:pb-1 lg:max-w-[90rem] lg:flex-row lg:flex-none lg:flex-nowrap lg:items-center lg:justify-center lg:gap-x-2.5 lg:gap-y-0 lg:overflow-x-auto lg:overflow-y-visible lg:px-1 lg:py-9 xl:py-10"
+            >
                 {HOW_ACTION_STEPS.map((step, i) => (
                   <Fragment key={step.stepLabel}>
                     <div
-                      className={`mx-auto grid w-full max-w-md shrink-0 grid-cols-[auto_1fr] grid-rows-[auto_auto_auto] items-start justify-items-stretch gap-x-3 gap-y-1 px-3 py-3 text-left min-h-0 rounded-2xl border border-zinc-400/50 bg-white/85 shadow-md backdrop-blur-sm md:mx-0 md:grid-cols-1 md:grid-rows-[auto_auto_auto_1fr] md:items-stretch md:justify-items-center md:gap-x-0 md:gap-y-0 md:px-4 md:py-2.5 md:pt-6 md:pb-6 md:text-center md:min-h-[21rem] md:w-[14.5rem] lg:min-h-[26rem] lg:w-[18rem] lg:px-5 lg:pt-7 lg:pb-7 ${
+                      className={`mx-auto grid w-full max-w-md shrink-0 grid-cols-[auto_1fr] grid-rows-[auto_auto_auto] items-start justify-items-stretch gap-x-2 gap-y-0 px-2 py-1.5 text-left min-h-0 rounded-2xl border border-zinc-400/50 bg-white/85 shadow-md backdrop-blur-sm md:mx-0 md:grid-cols-1 md:grid-rows-[auto_auto_auto_1fr] md:items-stretch md:justify-items-center md:gap-x-0 md:gap-y-0 md:px-4 md:py-2.5 md:pt-6 md:pb-6 md:text-center md:min-h-[21rem] md:w-[14.5rem] lg:min-h-[26rem] lg:w-[18rem] lg:px-5 lg:pt-7 lg:pb-7 ${
                         i % 2 === 0
                           ? "translate-y-0 md:-translate-y-2.5 lg:-translate-y-4"
                           : "translate-y-0 md:translate-y-2.5 lg:translate-y-4"
@@ -1123,32 +1150,32 @@ function Screen({
                       <p className="col-start-2 row-start-1 w-full shrink-0 font-extrabold leading-none tracking-wide text-[#2979FF] text-xs md:col-auto md:row-auto md:text-center md:text-sm lg:text-lg">
                         {step.stepLabel}
                       </p>
-                      <h3 className="col-start-2 row-start-2 mt-0 w-full text-balance font-bold leading-snug text-black text-base md:col-auto md:row-auto md:mt-1.5 md:text-center md:text-lg lg:mt-2 lg:text-2xl">
+                      <h3 className="col-start-2 row-start-2 mt-0 w-full text-balance font-bold leading-snug text-black text-[0.9375rem] max-lg:leading-snug md:col-auto md:row-auto md:mt-1.5 md:text-center md:text-lg lg:mt-2 lg:text-2xl">
                         {step.title}
                       </h3>
                       <div
-                        className="col-start-1 row-span-3 row-start-1 flex h-16 w-16 shrink-0 items-center justify-center justify-self-start rounded-full bg-[#eee] md:col-auto md:row-span-1 md:row-auto md:mt-5 md:h-[7.75rem] md:w-[7.75rem] md:justify-self-center lg:mt-7 lg:h-[10.25rem] lg:w-[10.25rem]"
+                        className="col-start-1 row-span-3 row-start-1 flex h-14 w-14 shrink-0 items-center justify-center justify-self-start rounded-full bg-[#eee] md:col-auto md:row-span-1 md:row-auto md:mt-5 md:h-[7.75rem] md:w-[7.75rem] md:justify-self-center lg:mt-7 lg:h-[10.25rem] lg:w-[10.25rem]"
                         aria-hidden
                       >
                         <img
                           src={step.icon}
                           alt=""
-                          className="h-10 w-10 object-contain md:h-[5rem] md:w-[5rem] lg:h-[6.75rem] lg:w-[6.75rem]"
+                          className="h-9 w-9 object-contain md:h-[5rem] md:w-[5rem] lg:h-[6.75rem] lg:w-[6.75rem]"
                           width={128}
                           height={128}
                           loading="lazy"
                           decoding="async"
                         />
                       </div>
-                      <div className="col-start-2 row-start-3 flex min-h-0 w-full min-w-0 flex-col items-start justify-start self-stretch md:col-auto md:row-auto md:mt-0 md:min-h-0 md:items-center md:self-stretch md:pt-4 sm:pt-5 lg:pt-5">
-                        <p className="max-w-full text-pretty text-left text-xs font-medium leading-relaxed text-black md:text-center md:text-xs sm:text-sm lg:text-base whitespace-pre-line">
+                      <div className="col-start-2 row-start-3 flex min-h-0 w-full min-w-0 flex-col items-start justify-start self-stretch max-lg:pt-1 md:col-auto md:row-auto md:mt-0 md:min-h-0 md:items-center md:self-stretch md:pt-4 lg:pt-5">
+                        <p className="max-w-full text-pretty text-left text-[0.6875rem] font-medium leading-relaxed text-black max-lg:leading-relaxed md:text-center md:text-xs sm:text-sm lg:text-base whitespace-pre-line">
                           {step.body}
                         </p>
                       </div>
                     </div>
                     {i < HOW_ACTION_STEPS.length - 1 ? (
                       <>
-                        <div className="flex justify-center py-1 md:hidden" aria-hidden>
+                        <div className="flex justify-center py-0.5 md:hidden" aria-hidden>
                           <svg
                             className="h-[1.35rem] w-[1.3rem] rotate-90 text-zinc-400/80"
                             viewBox="-5 -5 50 66"
@@ -1219,45 +1246,50 @@ function Screen({
 
           <div className="flex min-h-0 flex-1 flex-col justify-start overflow-hidden pt-[clamp(1rem,5vw,1.25rem)] pb-[clamp(1rem,5vw,1.25rem)] max-lg:min-h-0 sm:pt-8 sm:pb-8 lg:pt-10 lg:pb-10">
             <div className="mx-auto flex h-full min-h-0 w-full min-w-0 max-w-7xl flex-1 flex-col px-0 py-0">
-              <div className="flex w-full max-h-[min(72dvh,38rem)] min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-2xl border border-zinc-400/45 bg-white/85 p-2 shadow-md backdrop-blur-sm sm:p-2.5 md:p-3">
-                <div className="flex min-h-0 flex-1 flex-col justify-center gap-8 overflow-y-auto [-webkit-overflow-scrolling:touch] px-0.5 py-1 sm:gap-8 sm:py-1.5 lg:gap-7 lg:px-0 lg:py-0" data-nested-scroll>
+              <div className="flex w-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-2xl border border-zinc-400/45 bg-white/85 p-2 shadow-md backdrop-blur-sm max-lg:max-h-none sm:p-2.5 md:p-3 lg:max-h-[min(72dvh,38rem)]">
+                <div
+                  className="flex min-h-0 flex-1 flex-col justify-center gap-8 overflow-y-auto overscroll-contain [-webkit-overflow-scrolling:touch] px-0.5 py-1 max-lg:justify-start max-lg:gap-4 sm:gap-8 sm:py-1.5 lg:gap-7 lg:px-0 lg:py-0"
+                  data-nested-scroll
+                >
                   {EVENT_PACKAGE_ROWS.map((row, i) => (
                     <div
                       key={row.title}
                       className="flex min-h-0 w-full flex-col lg:flex-row lg:justify-center"
                     >
                       <div className="flex min-h-0 w-full min-w-0 flex-col gap-3 lg:grid lg:w-fit lg:max-w-full lg:grid-cols-[14rem_7rem_minmax(0,48rem)] lg:items-stretch lg:gap-x-3 lg:gap-y-0">
-                      <div
-                        className="flex w-fit shrink-0 items-center justify-center self-start rounded-xl px-4 py-2.5 text-center text-base font-bold leading-snug text-white shadow-sm sm:px-4 sm:py-3 sm:text-lg max-lg:self-start lg:h-full lg:w-full lg:min-w-0 lg:self-stretch lg:px-4 lg:text-xl lg:leading-snug"
-                        style={{ backgroundColor: EVENT_PACKAGE_TITLE_BG[i] }}
-                      >
-                        {row.title}
-                      </div>
-                      <div
-                        className="pointer-events-none hidden h-1 w-20 shrink-0 self-center bg-[radial-gradient(circle_closest-side,rgb(113_113_122)_1.5px,transparent_1.65px)] bg-[length:0.4375rem_100%] bg-center [background-repeat:repeat-x] opacity-85 sm:w-28 sm:bg-[length:0.5rem_100%] lg:block lg:self-center lg:justify-self-center"
-                        aria-hidden
-                      />
-                      <div className="flex min-h-0 min-w-0 w-full flex-1 self-stretch overflow-hidden rounded-xl border border-zinc-400/50 bg-white/90 py-2.5 shadow-sm sm:py-3 md:py-3.5 max-lg:max-w-none lg:min-h-0 lg:w-full lg:max-w-none">
-                        <div className="flex h-full max-h-full min-h-0 w-full min-w-0 overflow-x-auto overflow-y-hidden">
-                          <div className="flex min-h-[4.75rem] w-full min-w-[19rem] items-stretch gap-2 px-2.5 sm:min-h-[5.25rem] sm:gap-2.5 sm:px-3 md:min-h-[5.5rem] lg:h-full lg:min-h-0">
-                            {([row.bodyA, row.bodyB, row.bodyC] as const).map((text, j) => (
-                              <Fragment key={j}>
-                                <div className="flex min-h-0 min-w-0 flex-1 items-center justify-center py-1 sm:py-1.5 md:py-1.5">
-                                  <p className="w-full text-pretty text-center text-xs font-semibold leading-snug text-zinc-800 sm:text-sm sm:leading-snug md:text-base md:leading-snug lg:text-lg whitespace-pre-line">
-                                    {text}
-                                  </p>
-                                </div>
-                                {j < 2 ? (
-                                  <div
-                                    className="w-[1.5px] shrink-0 self-stretch rounded-full bg-zinc-400/90"
-                                    aria-hidden
-                                  />
-                                ) : null}
-                              </Fragment>
-                            ))}
+                        <div
+                          className="flex w-fit shrink-0 items-center justify-center self-start rounded-xl px-4 py-2.5 text-center font-bold text-white shadow-sm max-lg:px-2.5 max-lg:py-1.5 max-lg:[font-size:clamp(0.68rem,0.12rem+2.2vmin+0.35dvh+0.25vw,0.88rem)] max-lg:leading-snug max-lg:self-start sm:px-4 sm:py-3 lg:h-full lg:w-full lg:min-w-0 lg:self-stretch lg:px-4 lg:text-xl lg:leading-snug"
+                          style={{ backgroundColor: EVENT_PACKAGE_TITLE_BG[i] }}
+                        >
+                          {row.title}
+                        </div>
+                        <div
+                          className="pointer-events-none hidden h-1 w-20 shrink-0 self-center bg-[radial-gradient(circle_closest-side,rgb(113_113_122)_1.5px,transparent_1.65px)] bg-[length:0.4375rem_100%] bg-center [background-repeat:repeat-x] opacity-85 sm:w-28 sm:bg-[length:0.5rem_100%] lg:block lg:self-center lg:justify-self-center"
+                          aria-hidden
+                        />
+                        <div className="flex min-h-0 min-w-0 w-full flex-1 self-stretch rounded-xl border border-zinc-400/50 bg-white/90 py-2.5 shadow-sm max-lg:overflow-x-auto max-lg:overflow-y-visible sm:py-3 md:py-3.5 max-lg:max-w-none lg:min-h-0 lg:overflow-hidden lg:w-full lg:max-w-none">
+                          <div className="flex min-h-0 w-full min-w-0 overflow-x-auto max-lg:h-auto max-lg:max-h-none max-lg:overflow-y-visible lg:h-full lg:max-h-full lg:overflow-y-hidden">
+                            <div className="flex w-full min-h-0 min-w-[19rem] items-stretch gap-2 px-2.5 max-lg:min-h-0 sm:gap-2.5 sm:px-3 lg:min-h-[4.75rem] lg:h-full">
+                              {([row.bodyA, row.bodyB, row.bodyC] as const).map(
+                                (text, j) => (
+                                  <Fragment key={j}>
+                                    <div className="flex min-h-0 min-w-0 flex-1 items-center justify-center py-1 sm:py-1.5 md:py-1.5">
+                                      <p className="w-full text-pretty text-center font-semibold text-zinc-800 whitespace-pre-line max-lg:[font-size:clamp(0.5rem,0.04rem+1.35vmin+0.45dvh+0.28vw,0.75rem)] max-lg:leading-[1.25] lg:text-lg lg:leading-snug">
+                                        {text}
+                                      </p>
+                                    </div>
+                                    {j < 2 ? (
+                                      <div
+                                        className="w-[1.5px] shrink-0 self-stretch rounded-full bg-zinc-400/90"
+                                        aria-hidden
+                                      />
+                                    ) : null}
+                                  </Fragment>
+                                ),
+                              )}
+                            </div>
                           </div>
                         </div>
-                      </div>
                       </div>
                     </div>
                   ))}
@@ -1295,28 +1327,32 @@ function Screen({
             </h2>
           </header>
 
-          <div className="flex min-h-0 flex-1 flex-col justify-center overflow-hidden py-1 sm:py-1.5 lg:pt-8 lg:pb-2">
-            <div className="mx-auto flex h-full min-h-0 w-full max-w-6xl flex-1 flex-col">
-              <div className="flex min-h-0 w-full max-h-[min(56dvh,30rem)] flex-1 flex-col overflow-hidden rounded-2xl border border-zinc-400/45 bg-white/88 p-1.5 shadow-md backdrop-blur-sm sm:p-2 lg:max-h-[min(46dvh,22rem)] lg:p-2">
-                <div
-                  className="grid min-h-0 min-w-0 flex-1 grid-cols-1 gap-y-5 overflow-y-auto [-webkit-overflow-scrolling:touch] sm:gap-y-6 lg:grid-cols-[minmax(0,1fr)_1px_minmax(0,1fr)] lg:items-stretch lg:gap-y-0"
-                  data-nested-scroll
-                >
-                  <div className="flex min-h-0 min-w-0 items-center justify-center p-0 max-lg:pt-5 sm:max-lg:pt-6">
+          <div
+            data-nested-scroll
+            className="flex min-h-0 flex-1 flex-col justify-center py-1 sm:py-1.5 max-lg:min-h-0 max-lg:justify-start max-lg:overflow-y-auto max-lg:overflow-x-hidden max-lg:overscroll-contain [-webkit-overflow-scrolling:touch] lg:justify-center lg:overflow-hidden lg:pt-8 lg:pb-2"
+          >
+            <div className="mx-auto flex h-full min-h-0 w-full max-w-6xl flex-1 flex-col max-lg:h-auto max-lg:min-h-0">
+              <div className="flex min-h-0 w-full flex-1 flex-col overflow-hidden rounded-2xl border border-zinc-400/45 bg-white/88 p-1.5 shadow-md backdrop-blur-sm max-lg:max-h-none max-lg:flex-none max-lg:overflow-visible sm:p-2 lg:max-h-[min(46dvh,22rem)] lg:flex-1 lg:overflow-hidden lg:p-2">
+                <div className="grid min-h-0 min-w-0 flex-1 grid-cols-1 gap-y-6 overflow-y-auto [-webkit-overflow-scrolling:touch] max-lg:flex-none max-lg:overflow-visible max-lg:gap-y-5 sm:gap-y-7 lg:grid-cols-[minmax(0,1fr)_1px_minmax(0,1fr)] lg:items-stretch lg:gap-y-0 lg:overflow-y-auto">
+                  <div className="flex min-h-0 min-w-0 shrink-0 items-center justify-center p-0 max-lg:items-start max-lg:pb-4 max-lg:pt-1 sm:max-lg:pb-5 sm:max-lg:pt-2">
                     <img
                       alt=""
                       src="/13-1.png"
                       loading="lazy"
                       decoding="async"
-                      className="h-auto max-h-[min(28dvh,13rem)] w-full max-w-full rounded-lg object-contain object-center sm:max-h-[min(32dvh,15rem)] lg:max-h-[min(36dvh,16rem)]"
+                      className="h-auto max-h-[min(28dvh,13rem)] w-full max-w-full rounded-lg object-contain object-center sm:max-h-[min(32dvh,15rem)] max-lg:max-h-[min(30dvh,13.5rem)] lg:max-h-[min(36dvh,16rem)]"
                     />
                   </div>
+                  <div
+                    className="mx-3 my-2 h-px shrink-0 bg-zinc-300/75 lg:hidden"
+                    aria-hidden
+                  />
                   <div
                     className="hidden h-px w-full shrink-0 bg-zinc-300/55 lg:block lg:h-full lg:w-px lg:min-h-0"
                     aria-hidden
                   />
-                  <div className="flex min-h-0 min-w-0 items-center justify-center p-0">
-                    <div className="mx-auto w-full max-w-[min(100%,26rem)] px-2 py-1 sm:px-2.5 lg:max-w-[min(100%,28rem)] lg:px-3">
+                  <div className="flex min-h-0 min-w-0 shrink-0 items-center justify-center p-0 max-lg:items-start max-lg:pt-1 sm:max-lg:pt-2">
+                    <div className="mx-auto w-full max-w-[min(100%,26rem)] px-2 py-1 sm:px-2.5 max-lg:px-2.5 max-lg:pb-2 max-lg:pt-0 lg:max-w-[min(100%,28rem)] lg:px-3">
                       <p className="text-pretty text-left text-sm font-medium leading-relaxed text-zinc-800 sm:text-base sm:leading-relaxed lg:text-[0.9375rem] lg:leading-7 xl:text-lg whitespace-pre-line">
                       <strong className="font-bold text-zinc-950">신규 앱의 경쟁력</strong>
                       {`. 초기에 저렴한 단가로 테스트 마케팅
@@ -1385,7 +1421,6 @@ export default function Page() {
   const hoverTimeoutRef = useRef<number | null>(null);
   const menuClickRef = useRef(false);
   const navScrollBusyRef = useRef(false);
->>>>>>> c923c45 (feat: 팟 플레이 퍼블리싱)
 
   const goTo = useCallback((nextIndex: number) => {
     const container = containerRef.current;
@@ -1404,51 +1439,6 @@ export default function Page() {
   }, []);
 
   useEffect(() => {
-<<<<<<< HEAD
-    let scrollTimeout: NodeJS.Timeout;
-    // 초기값 설정 (의존성 배열에 currentIndex를 넣지 않는 이유: 이벤트 리스너 재등록 방지)
-    lastIndexRef.current = currentIndex;
-    let rafId: number | null = null;
-
-    const handleScroll = () => {
-      // 기존 raf 취소
-      if (rafId !== null) {
-        cancelAnimationFrame(rafId);
-      }
-
-      // requestAnimationFrame으로 다음 프레임에 처리
-      rafId = requestAnimationFrame(() => {
-        const container = scrollContainerRef.current;
-        if (!container) return;
-
-        const scrollTop = container.scrollTop;
-        const windowHeight = container.clientHeight;
-        const centerY = scrollTop + windowHeight / 2;
-
-        // 각 이미지의 중앙까지의 거리를 계산
-        let closestIndex = 0;
-        let closestDistance = Infinity;
-
-        imageRefs.current.forEach((ref, index) => {
-          if (!ref) return;
-
-          const rect = ref.getBoundingClientRect();
-          const containerRect = container.getBoundingClientRect();
-          const imageCenterY =
-            rect.top - containerRect.top + scrollTop + rect.height / 2;
-          const distance = Math.abs(centerY - imageCenterY);
-
-          if (distance < closestDistance) {
-            closestDistance = distance;
-            closestIndex = index;
-          }
-        });
-
-        // 인덱스가 실제로 변경되었을 때만 state 업데이트
-        if (lastIndexRef.current !== closestIndex) {
-          setCurrentIndex(closestIndex);
-          lastIndexRef.current = closestIndex;
-=======
     const container = containerRef.current;
     if (!container) return;
     let scrollTimeout: number | undefined;
@@ -1471,40 +1461,8 @@ export default function Page() {
         if (distance < closestDistance) {
           closestDistance = distance;
           closestIndex = index;
->>>>>>> c923c45 (feat: 팟 플레이 퍼블리싱)
         }
-
-        // 스크롤 중 플래그 설정
-        isScrollingRef.current = true;
-        clearTimeout(scrollTimeout);
-
-        // 스크롤이 멈춘 후 플래그 해제
-        scrollTimeout = setTimeout(() => {
-          isScrollingRef.current = false;
-          // 스크롤이 끝나면 메뉴 클릭 플래그도 해제하여 호버가 정상적으로 작동하도록
-          menuClickRef.current = false;
-        }, 300);
       });
-<<<<<<< HEAD
-    };
-
-    const container = scrollContainerRef.current;
-    if (container) {
-      // passive: true로 스크롤 성능 최적화
-      container.addEventListener("scroll", handleScroll, { passive: true });
-      handleScroll(); // 초기 실행
-
-      return () => {
-        container.removeEventListener("scroll", handleScroll);
-        clearTimeout(scrollTimeout);
-        if (rafId !== null) {
-          cancelAnimationFrame(rafId);
-        }
-      };
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-=======
 
       setActiveIndex(closestIndex);
       navScrollBusyRef.current = true;
@@ -1522,7 +1480,6 @@ export default function Page() {
       if (scrollTimeout !== undefined) clearTimeout(scrollTimeout);
     };
   }, [screens.length]);
->>>>>>> c923c45 (feat: 팟 플레이 퍼블리싱)
 
   useEffect(() => {
     return () => {
@@ -1628,130 +1585,9 @@ export default function Page() {
     };
   }, [activeIndex, screens.length, goTo]);
 
-  const handleRefSet = useCallback(
-    (index: number, el: HTMLDivElement | null) => {
-      imageRefs.current[index] = el;
-    },
-    []
-  );
-
-  // 휠 이벤트 제어: 한 페이지만 이동하도록 제한 (마지막 페이지 이후는 자유 스크롤)
-  useEffect(() => {
-    const container = scrollContainerRef.current;
-    if (!container) return;
-
-    const handleWheel = (e: WheelEvent) => {
-      const currentIdx = lastIndexRef.current;
-
-      // 마지막 이미지(12번 인덱스)에 있고 아래로 스크롤하는 경우: 자유 스크롤 허용
-      if (currentIdx === imageNumbers.length - 1 && e.deltaY > 0) {
-        return; // 기본 스크롤 동작 허용
-      }
-
-      // 스크롤 중이면 무시
-      if (isWheelScrollingRef.current) {
-        e.preventDefault();
-        return;
-      }
-
-      // 이미지 페이지 사이에서만 기본 스크롤 동작 막기
-      e.preventDefault();
-
-      const deltaY = e.deltaY;
-
-      // 아래로 스크롤 (양수)
-      if (deltaY > 0 && currentIdx < imageNumbers.length - 1) {
-        isWheelScrollingRef.current = true;
-        scrollToImage(currentIdx + 1);
-        setTimeout(() => {
-          isWheelScrollingRef.current = false;
-        }, 600);
-      }
-      // 위로 스크롤 (음수)
-      else if (deltaY < 0 && currentIdx > 0) {
-        isWheelScrollingRef.current = true;
-        scrollToImage(currentIdx - 1);
-        setTimeout(() => {
-          isWheelScrollingRef.current = false;
-        }, 600);
-      }
-    };
-
-    container.addEventListener("wheel", handleWheel, { passive: false });
-
-    return () => {
-      container.removeEventListener("wheel", handleWheel);
-    };
-  }, [imageNumbers.length]);
-
   return (
-<<<<<<< HEAD
-    <div
-      ref={scrollContainerRef}
-      className="bg-zinc-50 font-sans dark:bg-black overflow-y-scroll snap-y snap-mandatory h-screen"
-      style={{ scrollSnapType: "y mandatory" }}
-    >
-      {/* fixed 요소들을 최상위 레벨로 이동 - 1번 페이지에서는 숨김 */}
-      {currentIndex !== 0 && (
-        <div
-          className="fixed top-1/2 right-16 z-50"
-          onMouseEnter={() => {
-            if (hoverTimeoutRef.current) {
-              clearTimeout(hoverTimeoutRef.current);
-              hoverTimeoutRef.current = null;
-            }
-            setIsHovered(true);
-          }}
-          onMouseLeave={() => {
-            // 기존 타임아웃 클리어
-            if (hoverTimeoutRef.current) {
-              clearTimeout(hoverTimeoutRef.current);
-              hoverTimeoutRef.current = null;
-            }
-
-            // menuClickRef가 true면 (클릭 후), 스크롤 중이어도 즉시 호버 끄기
-            if (menuClickRef.current) {
-              menuClickRef.current = false;
-              setIsHovered(false);
-              return;
-            }
-
-            // 스크롤 중이면 호버 유지 (클릭하지 않은 경우)
-            if (isScrollingRef.current) return;
-
-            hoverTimeoutRef.current = setTimeout(() => {
-              setIsHovered(false);
-              hoverTimeoutRef.current = null;
-            }, 200);
-          }}
-        >
-          <ul
-            className={`flex flex-col gap-[20px] items-end -translate-y-1/2 transition-opacity duration-300 ${
-              isHovered ? "opacity-0" : "opacity-100"
-            }`}
-          >
-            {imageNumbers.slice(1).map((num, index) => {
-              // 1번 페이지를 제외하고 2번부터 시작하므로 실제 인덱스는 index + 1
-              const actualIndex = index + 1;
-              return (
-                <li
-                  key={num}
-                  onClick={() => scrollToImage(actualIndex)}
-                  className={`cursor-pointer transition-all ${
-                    currentIndex === actualIndex
-                      ? "bg-black w-[35px] h-[4px]"
-                      : "bg-[#9d9d9d] w-[16px] h-[4px]"
-                  }`}
-                ></li>
-              );
-            })}
-          </ul>
-        </div>
-      )}
-=======
     <div className="min-h-dvh">
       <GradientBackdrop />
->>>>>>> c923c45 (feat: 팟 플레이 퍼블리싱)
 
       <div
         ref={containerRef}
@@ -1782,33 +1618,10 @@ export default function Page() {
               setIsNavHovered(true);
             }}
             onMouseLeave={() => {
-<<<<<<< HEAD
-              // 기존 타임아웃 클리어
-              if (hoverTimeoutRef.current) {
-                clearTimeout(hoverTimeoutRef.current);
-                hoverTimeoutRef.current = null;
-              }
-
-              // menuClickRef가 true면 (클릭 후), 스크롤 중이어도 즉시 호버 끄기
-              if (menuClickRef.current) {
-                menuClickRef.current = false;
-                setIsHovered(false);
-                return;
-              }
-
-              // 스크롤 중이면 호버 유지 (클릭하지 않은 경우)
-              if (isScrollingRef.current) return;
-
-              hoverTimeoutRef.current = setTimeout(() => {
-                setIsHovered(false);
-                hoverTimeoutRef.current = null;
-              }, 300);
-=======
               if (navScrollBusyRef.current) return;
               hoverTimeoutRef.current = window.setTimeout(() => {
                 setIsNavHovered(false);
               }, 200);
->>>>>>> c923c45 (feat: 팟 플레이 퍼블리싱)
             }}
           >
             <ul
@@ -1820,33 +1633,6 @@ export default function Page() {
                 const actualIndex = num - 1;
                 return (
                   <li
-<<<<<<< HEAD
-                    key={item.id}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      // 호버 상태 유지
-                      if (hoverTimeoutRef.current) {
-                        clearTimeout(hoverTimeoutRef.current);
-                        hoverTimeoutRef.current = null;
-                      }
-                      menuClickRef.current = true;
-                      setIsHovered(true);
-                      // navToImageMap에서 매핑된 이미지 번호를 가져오고, 없으면 기본값으로 item.id 사용
-                      const targetImageNum = navToImageMap[item.id] || item.id;
-                      // 이미지 번호를 인덱스로 변환 (num: 2 → index: 1, num: 4 → index: 3)
-                      const targetIndex = targetImageNum - 1;
-                      scrollToImage(targetIndex);
-                      // 스크롤이 끝나면 handleScroll에서 menuClickRef.current를 false로 설정하므로
-                      // 여기서는 별도 타임아웃이 필요 없음
-                    }}
-                    onMouseDown={(e) => {
-                      e.preventDefault();
-                    }}
-                    className={`${activeStyle} text-[18px] font-bold cursor-pointer transition-colors hover:text-white`}
-                  >
-                    {item.name}
-                  </li>
-=======
                     key={num}
                     onClick={() => goTo(actualIndex)}
                     className={`cursor-pointer transition-all ${
@@ -1855,65 +1641,10 @@ export default function Page() {
                         : "h-[4px] w-[16px] bg-[#9d9d9d]"
                     }`}
                   />
->>>>>>> c923c45 (feat: 팟 플레이 퍼블리싱)
                 );
               })}
             </ul>
           </div>
-<<<<<<< HEAD
-        )}
-
-        {/* 이미지들 */}
-        <div className="relative">
-          <Images
-            imageNumbers={imageNumbers}
-            overlayImageNumbers={overlayImageNumbers}
-            onRefSet={handleRefSet}
-          />
-        </div>
-
-        {currentIndex === 0 && (
-          <Image
-            src="/arrow-down.svg"
-            alt="arrow down"
-            width={30}
-            height={30}
-            priority
-            className="fixed left-1/2 -translate-x-1/2 bottom-[30px] z-50"
-          />
-        )}
-
-        {/* 문의 모달 버튼 */}
-        <Image
-          src={isInquiryModalOpen ? "/Xcircle.svg" : "/send.svg"}
-          alt={isInquiryModalOpen ? "close" : "send"}
-          width={48}
-          height={48}
-          priority
-          className="fixed bottom-[12%] right-[8%] z-50"
-          onClick={() => {
-            if (isInquiryModalOpen) {
-              setIsInquiryModalOpen(false);
-            } else {
-              setIsInquiryModalOpen(true);
-            }
-          }}
-        />
-        <InquiryModal
-          isOpen={isInquiryModalOpen}
-          onClose={() => setIsInquiryModalOpen(false)}
-          className="fixed bottom-[16%] right-[12%] z-50"
-        />
-
-        {/* 푸터 */}
-        <div
-          className="snap-start flex-shrink-0"
-          style={{ scrollSnapStop: "normal" }}
-        >
-          <Footer />
-        </div>
-      </div>
-=======
 
           {isNavHovered ? (
             <div
@@ -1996,7 +1727,6 @@ export default function Page() {
           src={contactOpen ? "/Xcircle.svg" : "/send.svg"}
         />
       </button>
->>>>>>> c923c45 (feat: 팟 플레이 퍼블리싱)
     </div>
   );
 }
